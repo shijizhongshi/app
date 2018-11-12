@@ -1,0 +1,84 @@
+<#import "/layout/header.ftl" as h/>
+<#import "/layout/bodypower.ftl" as b/>
+<!DOCTYPE html>
+<html lang="en">
+<@h.header title="店主统计"/>
+<script src="/scripts/user/child.js"></script>
+<@b.body menu="sidebarmenu-acount-user" submenu="sidebarmenu-acount-user-child">
+    
+    <!-- Responsive Table -->
+    <div class="row" ng-controller="UserChildController">
+     <input type="hidden" value="${username}" id="username">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">店主管理</h3>
+                    <div class="panel-options">
+                        <a href="#" data-toggle="panel">
+                            <span class="collapse-icon">&ndash;</span>
+                            <span class="expand-icon">+</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <form class="form" role="form">
+                    <div class="row">
+                        
+                        <div class="col-sm-1 form-group">
+                            <label>手机号</label>
+                        </div>
+                        <div class="col-sm-2 form-group" style="padding-left:0px;">
+                            <input type="text" ng-model="mobile" class="form-control">
+                        </div>
+                        <div class="col-sm-1 form-group">
+                            <label>邀请码</label>
+                        </div>
+                        <div class="col-sm-2 form-group" style="padding-left:0px;">
+                            <input type="text" ng-model="invitationcode" class="form-control">
+                        </div>
+                        <div class="col-sm-9 form-group" style="width: 30px;">
+                            <input type="button" class="btn btn-default" ng-click="search()" value="搜索" style="background-color: #ccc;">
+                        </div>
+                    </div>
+                    </form>
+                    <div class="table-responsive">
+                        <!--data-pattern="priority-columns" data-sticky-table-header="true">-->
+                        <!--data-focus-btn-icon="fa-asterisk" data-sticky-table-header="true"-->
+                        <!--data-add-display-all-btn="true">-->
+                        <table cellspacing="0" class="table table-small-font table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th data-priority="1">昵称</th>
+                                <th>直推总数</th>
+                                <th>清货额度</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td><img src="{{user.headImgUrl}}" ng-show="user.headImgUrl!=null" style="width:30px"/><img ng-show="user.headImgUrl==null && user.nickName!=null" src="/images/touxiang.png" style="width:30px"/>{{user.nickName}}</td>
+                                <td>{{user.userCountz}}</td>
+                                <td>{{user.money}}</td>
+                            </tr>
+                            
+                            </tbody>
+                        </table>
+                    </div>
+                   
+                    <script type="text/javascript">
+                               // This JavaScript Will Replace Checkboxes in dropdown toggles
+                               jQuery(document).ready(function($)
+                               {
+                               setTimeout(function()
+                               {
+                               $(".checkbox-row input").addClass('cbr');
+                               cbr_replace();
+                               }, 0);
+                               });
+
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</@b.body>
+</html>

@@ -1,0 +1,58 @@
+app.controller("AdminExpressConfirmListController", function($scope, $http){
+    $scope.user = {};
+    //分页展示
+    //总条数
+    $scope.total = 0;
+    //当前的页数
+    $scope.current = 1;
+    //一页显示多少条
+    $scope.pageSize = 20;
+    //判断用户有没有登陆
+    $http.get("/api/admin/islogin",{'Content-Type': 'application/json;charset=UTF-8'})
+    .success(function(data){
+    	if(data=="login"){
+    		location.href="/";
+    	}
+    	$scope.username=data;
+    })
+    
+    $scope.search = function(){
+    	$scope.loaddata();
+    }
+    
+    $scope.loaddata = function(){
+    	var from = ($scope.current - 1) * $scope.pageSize;
+    	//status=2表示待确定
+        $http.get("/api/express/list", {"params": {"status":2, "pageSize": $scope.pageSize,
+            "pageNo": from, "mobile": $scope.mobile, "orderNo":$scope.orderNo,"expressNo":$scope.expressNo}}, {'Content-Type': 'application/json;charset=UTF-8'})
+            .success(function(data){
+                if(data.status="0"){
+                	$scope.list = data.data;
+                	$scope.total = data.count;
+                    return;
+                }else{
+                    toastr.error(data.message);
+                }
+            }).error(function(data){
+                toastr.error(data.message);
+            });
+    };
+    
+    $scope.loaddata();
+    
+    
+    $scope.details = function(expressId){
+    	window.location.href="/web/express/detail?expressId="+expressId;
+    };
+    $scope.confirm = function(expressId,total,userId,orderNo){
+    	window.location.href="/web/express/confirm?expressId="+expressId+"&total="+total+"&userId="+userId+"&orderNo="+orderNo;
+    };
+    $scope.freeze = function(expressId,total,userId,orderNo){
+    	window.location.href="/web/express/freeze?expressId="+expressId+"&total="+total+"&userId="+userId+"&orderNo="+orderNo;
+    };
+    
+    
+    
+    
+    
+});

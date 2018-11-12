@@ -1,0 +1,111 @@
+<#import "/layout/header.ftl" as h/>
+<#import "/layout/bodypower.ftl" as b/>
+<!DOCTYPE html>
+<html lang="en">
+<@h.header title="导师管理"/>
+<script src="/scripts/user/tutor.js"></script>
+<@b.body menu="sidebarmenu-acount-user" submenu="sidebarmenu-acount-user-tutor">
+
+    <!-- Responsive Table -->
+    <div class="row" ng-controller="UserTutorController">
+    <input type="hidden" value="${username}" id="username">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">导师管理</h3>
+                    <div class="panel-options">
+                        <a href="#" data-toggle="panel">
+                            <span class="collapse-icon">&ndash;</span>
+                            <span class="expand-icon">+</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <form class="form" role="form">
+                    <div class="row">
+                        <div class="col-sm-1 form-group">
+                            <label>手机号</label>
+                        </div>
+                        <div class="col-sm-2 form-group" style="padding-left:0px;">
+                            <input type="text" ng-model="mobile" class="form-control">
+                        </div>
+                        <div class="col-sm-1 form-group">
+                            <label>邀请码</label>
+                        </div>
+                        <div class="col-sm-2 form-group" style="padding-left:0px;">
+                            <input type="text" ng-model="invitationcode" class="form-control">
+                        </div>
+                        <div class="col-sm-9 form-group" style="width: 30px;">
+                            <input type="button" class="btn btn-default" ng-click="search()" value="搜索" style="background-color: #ccc;">
+                        </div>
+                    </div>
+                    </form>
+                    
+                    <div class="table-responsive">
+                        <table cellspacing="0" class="table table-small-font table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <td data-priority="1">手机号</td>
+                                <td data-priority="1">邀请码</td>
+                                <td data-priority="1">昵称</td>
+                                <td data-priority="1">操作</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                               	<td>{{user.mobile}}</td>
+                               	<td>{{user.invitationCode}}</td>
+                                <td>{{user.nickName}}</td>
+                                <td><input type="button" ng-show="shows" value="设置导师" ng-click="setTutor(user.invitationCode,user.id)"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    
+                    
+                    
+                    
+                    <div class="table-responsive" style="margin-top:20px;">
+                        <table cellspacing="0" class="table table-small-font table-bordered table-striped">
+                            <thead>
+                            <tr><th>导师列表<th></tr>
+                            <tr>
+                                <td data-priority="1">手机号</td>
+                                <td data-priority="1">邀请码</td>
+                                <td data-priority="1">昵称</td>
+                                <td data-priority="1">操作</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="list in users">
+                               	<td>{{list.mobile}}</td>
+                               	<td>{{list.tutorcode}}</td>
+                                <td>{{list.nickName}}</td>
+                                <td>
+                                <input ng-show="{{list.mobile!=null}}" type="button" value="移除导师" ng-click="outTutor(list.id)">
+                                <input  ng-show="{{list.mobile!=null}}" type="button" value="业绩详情" ng-click="detail(list.tutorId)">
+                                </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="col-sm-6"></div>
+                    <div class="col-sm-6">
+                        <ul uib-pagination boundary-links="true"
+                            total-items="total" ng-model="current"
+                            items-per-page="pageSize"
+                            max-size="5"
+                            class="pagination-sm" previous-text="&lsaquo;"
+                            next-text="&rsaquo;"
+                            first-text="&laquo;" last-text="&raquo;" ng-change="loaddata()">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</@b.body>
+</html>

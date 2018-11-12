@@ -1,0 +1,154 @@
+package com.ola.qh.dao;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import com.ola.qh.entity.UserLogin;
+
+@Repository
+public class UserLoginDao
+{
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    // 第一次登陆的时候进行添加
+    public boolean insert(UserLogin userLogin)
+    {
+	String sql = "insert into t_user_login(user_id,token,device_name,device_id,create_time,device_token) values(?,?,?,?,?,?)";
+	Object[] params = new Object[]
+	{
+		userLogin.getUserId(), userLogin.getToken(), userLogin.getDeviceName(), userLogin.getDeviceId(), new Date(), userLogin.getDeviceToken()
+	};
+
+	int num = jdbcTemplate.update(sql, params);
+	if (num > 0)
+	{
+	    return true;
+	}
+	return false;
+
+    }
+    // 以后登陆的时候需要进行修改（如果device_id发生变化的情况下就修改device_name，device_id，last_time否则就只修改last_time）
+
+    // 查登陆用户是否登陆过
+    public int exists(UserLogin ul)
+    {
+	StringBuffer sql = new StringBuffer();
+	sql.append("select count(*) from t_user_login where 1=1");
+	List<Object> params = new ArrayList<Object>();
+	if (ul != null)
+	{
+	    if (ul.getId() != null && ul.getId() != "")
+	    {
+		sql.append(" and id = ?");
+		params.add(ul.getId());
+	    }
+	    if (ul.getUserId() != null && ul.getUserId() != "")
+	    {
+		sql.append(" and user_id = ?");
+		params.add(ul.getUserId());
+	    }
+	    if (ul.getToken() != null && ul.getToken() != "")
+	    {
+		sql.append(" and token = ?");
+		params.add(ul.getToken());
+	    }
+	}
+
+	int count = jdbcTemplate.queryForObject(sql.toString(), params.toArray(), Integer.class);
+	return count;
+
+    }
+
+    // 按条件查询唯一的用户的登陆信息
+    public UserLogin singleUserLogin(UserLogin ul)
+    {
+	StringBuffer sql = new StringBuffer();
+	sql.append("select * from t_user_login");
+	sql.append(" where 1=1");
+	List<Object> params = new ArrayList<Object>();
+	if (ul != null)
+	{
+	    if (ul.getId() != null && ul.getId() != "")
+	    {
+		sql.append(" and id = ?");
+		params.add(ul.getId());
+	    }
+	    if (ul.getUserId() != null && ul.getUserId() != "")
+	    {
+		sql.append(" and user_id = ?");
+		params.add(ul.getUserId());
+	    }
+	    if (ul.getToken() != null && ul.getToken() != "")
+	    {
+		sql.append(" and token = ?");
+		params.add(ul.getToken());
+	    }
+	}
+
+	UserLogin userLogin = jdbcTemplate.queryForObject(sql.toString(), params.toArray(), new BeanPropertyRowMapper<UserLogin>(UserLogin.class));
+	return userLogin;
+
+    }
+
+    // 修改用户登陆信息
+    public boolean updateUserLogin(UserLogin ul)
+    {
+
+	StringBuffer sql = new StringBuffer();
+	sql.append("update t_user_login set ");
+	List<Object> params = new ArrayList<Object>();
+	if (ul != null)
+	{
+	    if (ul.getDeviceId() != null && ul.getDeviceId() != "")
+	    {
+		sql.append("device_id = ?,");
+		params.add(ul.getDeviceId());
+	    }
+
+	    if (ul.getDeviceName() != null && ul.getDeviceName() != "")
+	    {
+		sql.append("device_name = ?,");
+		params.add(ul.getDeviceName());
+
+	    }
+	    sql.append("last_time = ?");
+	    params.add(new Date());
+
+	    sql.append(" where user_id = ?");
+	    params.add(ul.getUserId());
+
+	    int num = jdbcTemplate.update(sql.toString(), params.toArray());
+	    if (num > 0)
+	    {
+		return true;
+	    }
+	    return false;
+
+	}
+	return false;
+
+    }
+    
+    
+    public String getPassword(String username){
+	String sql="select password from t_admin where username=?";
+	Object[] params = new Object[]{username};
+	
+	return jdbcTemplate.queryForObject(sql, params, String.class);
+	
+    }
+    
+    public int existeAdmin(String username){
+	String sql="select count(id) from t_admin where username=?";
+	Object[] params = new Object[]{username};
+	return jdbcTemplate.queryForObject(sql, params, Integer.class);
+    }
+
+}

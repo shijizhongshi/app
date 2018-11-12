@@ -1,0 +1,60 @@
+app.controller("AdminDeliverListController", function($scope, $http){
+    //判断用户有没有登陆
+    $http.get("/api/admin/islogin",{'Content-Type': 'application/json;charset=UTF-8'})
+    .success(function(data){
+    	if(data=="login"){
+    		location.href="/";
+    	}
+    	$scope.username=data;
+    })
+    
+    //总条数
+    $scope.total = 0;
+    //当前的页数
+    $scope.current = 1;
+    //一页显示多少条
+    $scope.pageSize = 20;
+    
+    $scope.search = function(){
+    	$scope.loaddata();
+    }
+    $scope.loaddata = function(){
+    	var from = ($scope.current - 1) * $scope.pageSize;
+        $http.get("/api/deliver/list", {"params": {"pageNo":from, "pageSize": $scope.pageSize}}, {'Content-Type': 'application/json;charset=UTF-8'})
+            .success(function(data){
+                if(data.status="0"){
+                	$scope.list = data.data;
+                	$scope.total = data.count;
+                    return;
+                }else{
+                    toastr.error(data.message);
+                }
+            }).error(function(data){
+                toastr.error(data.message);
+            });
+    };
+    
+    $scope.loaddata();
+    
+    $scope.update = function(id){
+    	location.href="/web/system/deliver/add?did="+id;
+    }
+    
+    
+    $scope.deletes = function(id){
+    	  $http.get("/api/deliver/delete", {"params": {"id":id}}, {'Content-Type': 'application/json;charset=UTF-8'})
+          .success(function(data){
+              if(data.status="0"){
+            	  alert("删除成功");
+            	  location.href="/web/system/deliver/list";
+                  return;
+              }else{
+                  alert(data.message);
+              }
+          }).error(function(data){
+              alert(data.message);
+          });
+  };
+    
+    
+});

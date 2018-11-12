@@ -1,0 +1,291 @@
+package com.ola.qh.entity;
+
+public class UserAdd
+{
+    
+        
+    private int directlyAdd;
+    
+    private int directlyTotal;//直推收益
+    
+    private int referrerTotal;//间推收益
+    
+    
+    private int todaysadd;
+    
+    private int lastweekadd;
+    
+    private int thismonthadd;
+    
+    private int totalshop;
+    
+    private int referrertodaysadd;
+    
+    private int referrerlastweekadd;
+    
+    private int referrerthismonthadd;
+    
+    private int referrertotalshop;
+
+    private String userId;
+    
+    private String nickName;//用户的昵称
+    
+    private String headImgUrl;//用户的头像
+    
+    private String identity;//用户的身份
+    
+    
+   private String todaytotal;//今日收益
+   
+   private String lastweektotal;//上周的收益
+   
+   private String thismonthtotal;//这个月的收益
+   
+   private String shoptotal;//累计总收益
+    
+    
+   private String totalsales;///累计销售提成
+   
+   private String todaysalestotal;///今日销售提成
+   
+   private String lastweeksaletotal;/////上月的销售提成
+   
+   private String thismonthsaletotal;//本月的销售提成
+   
+   
+
+    
+    public String getTotalsales()
+{
+    return totalsales;
+}
+
+public void setTotalsales(String totalsales)
+{
+    this.totalsales = totalsales;
+}
+
+public String getTodaysalestotal()
+{
+    return todaysalestotal;
+}
+
+public void setTodaysalestotal(String todaysalestotal)
+{
+    this.todaysalestotal = todaysalestotal;
+}
+
+public String getLastweeksaletotal()
+{
+    return lastweeksaletotal;
+}
+
+public void setLastweeksaletotal(String lastweeksaletotal)
+{
+    this.lastweeksaletotal = lastweeksaletotal;
+}
+
+public String getThismonthsaletotal()
+{
+    return thismonthsaletotal;
+}
+
+public void setThismonthsaletotal(String thismonthsaletotal)
+{
+    this.thismonthsaletotal = thismonthsaletotal;
+}
+
+    public int getDirectlyAdd()
+{
+    return directlyAdd;
+}
+
+public void setDirectlyAdd(int directlyAdd)
+{
+    this.directlyAdd = directlyAdd;
+}
+
+public int getDirectlyTotal()
+{
+    return directlyTotal;
+}
+
+public void setDirectlyTotal(int directlyTotal)
+{
+    this.directlyTotal = directlyTotal;
+}
+
+public int getReferrerTotal()
+{
+    return referrerTotal;
+}
+
+public void setReferrerTotal(int referrerTotal)
+{
+    this.referrerTotal = referrerTotal;
+}
+
+    public String getNickName()
+    {
+        return nickName;
+    }
+
+    public void setNickName(String nickName)
+    {
+        this.nickName = nickName;
+    }
+
+    public String getHeadImgUrl()
+    {
+        return headImgUrl;
+    }
+
+    public void setHeadImgUrl(String headImgUrl)
+    {
+        this.headImgUrl = headImgUrl;
+    }
+
+    public String getIdentity()
+    {
+        return identity;
+    }
+
+    public void setIdentity(String identity)
+    {
+        this.identity = identity;
+    }
+
+    public int getTodaysadd()
+    {
+        return todaysadd;
+    }
+
+    public void setTodaysadd(int todaysadd)
+    {
+        this.todaysadd = todaysadd;
+    }
+
+    public int getLastweekadd()
+    {
+        return lastweekadd;
+    }
+
+    public void setLastweekadd(int lastweekadd)
+    {
+        this.lastweekadd = lastweekadd;
+    }
+
+    public int getThismonthadd()
+    {
+        return thismonthadd;
+    }
+
+    public void setThismonthadd(int thismonthadd)
+    {
+        this.thismonthadd = thismonthadd;
+    }
+
+    public int getTotalshop()
+    {
+        return totalshop;
+    }
+
+    public void setTotalshop(int totalshop)
+    {
+        this.totalshop = totalshop;
+    }
+
+    public String getUserId()
+    {
+        return userId;
+    }
+
+    public void setUserId(String userId)
+    {
+        this.userId = userId;
+    }
+
+    public int getReferrertodaysadd()
+    {
+        return referrertodaysadd;
+    }
+
+    public void setReferrertodaysadd(int referrertodaysadd)
+    {
+        this.referrertodaysadd = referrertodaysadd;
+    }
+
+    public int getReferrerlastweekadd()
+    {
+        return referrerlastweekadd;
+    }
+
+    public void setReferrerlastweekadd(int referrerlastweekadd)
+    {
+        this.referrerlastweekadd = referrerlastweekadd;
+    }
+
+    public int getReferrerthismonthadd()
+    {
+        return referrerthismonthadd;
+    }
+
+    public void setReferrerthismonthadd(int referrerthismonthadd)
+    {
+        this.referrerthismonthadd = referrerthismonthadd;
+    }
+
+    public int getReferrertotalshop()
+    {
+        return referrertotalshop;
+    }
+
+    public void setReferrertotalshop(int referrertotalshop)
+    {
+        this.referrertotalshop = referrertotalshop;
+    }
+
+    public String getTodaytotal()
+    {
+        return todaytotal;
+    }
+
+    public void setTodaytotal(String todaytotal)
+    {
+        this.todaytotal = todaytotal;
+    }
+
+    public String getLastweektotal()
+    {
+        return lastweektotal;
+    }
+
+    public void setLastweektotal(String lastweektotal)
+    {
+        this.lastweektotal = lastweektotal;
+    }
+
+    public String getThismonthtotal()
+    {
+        return thismonthtotal;
+    }
+
+    public void setThismonthtotal(String thismonthtotal)
+    {
+        this.thismonthtotal = thismonthtotal;
+    }
+
+    public String getShoptotal()
+    {
+        return shoptotal;
+    }
+
+    public void setShoptotal(String shoptotal)
+    {
+        this.shoptotal = shoptotal;
+    }
+    
+    
+
+}

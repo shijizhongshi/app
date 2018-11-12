@@ -1,0 +1,50 @@
+app.controller("OrderAccountController", function($scope, $http){
+    $scope.fromdate = '';
+    $scope.todate = '';
+
+    $scope.openfromdatepicker = function(){
+        $scope.fromdatepickeropen = true;
+    };
+    $scope.opentodatepicker = function(){
+        $scope.todatepickeropen = true;
+    };
+    $scope.$watch("fromdate", function(newv, oldv){
+        $scope.loaddata();
+    });
+    $scope.$watch("todate", function(newv, oldv){
+        $scope.loaddata();
+    });
+    
+    var formatDate = function (date) { 
+		if(date){
+		  	var y = date.getFullYear();  
+		    var m = date.getMonth() + 1;  
+		    m = m < 10 ? '0' + m : m;  
+		    var d = date.getDate();  
+		    d = d < 10 ? ('0' + d) : d;  
+		    return y + '-' + m + '-' + d;
+		} else{
+			return '';
+		}
+	      
+	}; 
+    
+    $scope.loaddata = function(){
+        var from = ($scope.current - 1) * $scope.pageSize;
+        $http.get("/api/virtual/orderaccount",
+                {"params": {"fromdate": formatDate($scope.fromdate), "todate": formatDate($scope.todate)}},
+                {'Content-Type': 'application/json;charset=UTF-8'})
+            .success(function(data){
+                if(data.status=="0"){
+                    $scope.record = data.data;
+                    $scope.count = data.count;
+                }else{
+                    toastr.error(data.message);
+                }
+            }).error(function(data){
+                toastr.error(data.message);
+            });
+    };
+
+    $scope.loaddata();
+});

@@ -1,0 +1,206 @@
+package com.ola.qh.entity;
+
+import java.util.Date;
+
+public class UserBook
+{
+
+    private String userId;
+
+    private Integer sumvirtual;// 总的额度值
+
+    private Integer sumowvirtual;// 回收订单待确认总额度
+
+    private Integer sumocvirtual;// 回收订单的已确认
+
+    private Integer sumdhcvirtual;// 兑换的总额度
+
+    private Integer sumfreezevirtual;// 冻结的总额值
+
+    private Integer sumusevirtual;// 可用的额度值
+
+    private Integer summoney;// 总的钱数
+
+    private Integer sumwmoney;// 待审核的钱数
+
+    private Integer sumcmoney;// 已确认的钱数
+
+    private Integer sumusemoney;// 可提现金额
+    
+    private String nickName;// 昵称
+    
+    private String mobile;//手机号
+    
+    private Date lastTime;//修改时间
+    
+    private Date createTime;//创建时间
+    
+    private String id;
+    
+    
+    
+
+
+    public Date getLastTime()
+    {
+        return lastTime;
+    }
+
+    public void setLastTime(Date lastTime)
+    {
+        this.lastTime = lastTime;
+    }
+
+    public Date getCreateTime()
+    {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime)
+    {
+        this.createTime = createTime;
+    }
+
+    public String getId()
+    {
+        return id;
+    }
+
+    public void setId(String id)
+    {
+        this.id = id;
+    }
+
+    public String getNickName()
+    {
+        return nickName;
+    }
+
+    public void setNickName(String nickName)
+    {
+        this.nickName = nickName;
+    }
+
+    public String getMobile()
+    {
+        return mobile;
+    }
+
+    public void setMobile(String mobile)
+    {
+        this.mobile = mobile;
+    }
+
+    public String getUserId()
+    {
+	return userId;
+    }
+
+    public void setUserId(String userId)
+    {
+	this.userId = userId;
+    }
+
+    public Integer getSumvirtual()
+    {
+        return sumvirtual;
+    }
+
+    public void setSumvirtual(Integer sumvirtual)
+    {
+        this.sumvirtual = sumvirtual;
+    }
+
+    public Integer getSumowvirtual()
+    {
+        return sumowvirtual;
+    }
+
+    public void setSumowvirtual(Integer sumowvirtual)
+    {
+        this.sumowvirtual = sumowvirtual;
+    }
+
+    public Integer getSumocvirtual()
+    {
+        return sumocvirtual;
+    }
+
+    public void setSumocvirtual(Integer sumocvirtual)
+    {
+        this.sumocvirtual = sumocvirtual;
+    }
+
+    public Integer getSumdhcvirtual()
+    {
+        return sumdhcvirtual;
+    }
+
+    public void setSumdhcvirtual(Integer sumdhcvirtual)
+    {
+        this.sumdhcvirtual = sumdhcvirtual;
+    }
+
+    public Integer getSumfreezevirtual()
+    {
+        return sumfreezevirtual;
+    }
+
+    public void setSumfreezevirtual(Integer sumfreezevirtual)
+    {
+        this.sumfreezevirtual = sumfreezevirtual;
+    }
+
+    public Integer getSumusevirtual()
+    {
+        return sumusevirtual;
+    }
+
+    public void setSumusevirtual(Integer sumusevirtual)
+    {
+        this.sumusevirtual = sumusevirtual;
+    }
+
+    public Integer getSummoney()
+    {
+        return summoney;
+    }
+
+    public void setSummoney(Integer summoney)
+    {
+        this.summoney = summoney;
+    }
+
+    public Integer getSumwmoney()
+    {
+        return sumwmoney;
+    }
+
+    public void setSumwmoney(Integer sumwmoney)
+    {
+        this.sumwmoney = sumwmoney;
+    }
+
+    public Integer getSumcmoney()
+    {
+        return sumcmoney;
+    }
+
+    public void setSumcmoney(Integer sumcmoney)
+    {
+        this.sumcmoney = sumcmoney;
+    }
+
+    public Integer getSumusemoney()
+    {
+        return sumusemoney;
+    }
+
+    public void setSumusemoney(Integer sumusemoney)
+    {
+        this.sumusemoney = sumusemoney;
+    }
+
+   
+
+}

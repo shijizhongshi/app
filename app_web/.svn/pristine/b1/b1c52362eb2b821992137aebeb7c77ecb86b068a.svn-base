@@ -1,0 +1,56 @@
+app.controller("AdminFreezeController", function($scope, $http){
+	$scope.express={};
+    //判断用户有没有登陆
+    $http.get("/api/admin/islogin",{'Content-Type': 'application/json;charset=UTF-8'})
+    .success(function(data){
+    	if(data=="login"){
+    		location.href="/";
+    	}
+    	$scope.username=data;
+    })
+   
+    $scope.submit = function(){
+    	
+    	$scope.express.status = 4;
+    	$scope.express.id = $("#expressId").val();
+    	$scope.express.userId = $("#userId").val();
+    	$scope.express.total = $("#total").val();
+    	$scope.express.orderNo = $("#orderNo").val();
+    	$scope.express.freezeReason = $scope.freezeReason;
+    	$http.post("/api/express/update",$scope.express,{'Content-Type': 'application/json;charset=UTF-8'})
+    	.success(function(data){
+    		if(data.status=="0"){
+    			alert("提交成功");
+    			location.href="/web/express/confirmedlist";
+    			return;
+    		}else{
+    			alert("提交失败");
+    			return;
+    		}
+        	
+        	
+		})
+    	
+    }
+    
+    
+    $scope.update = function(){
+    	$scope.banner.id = $("#bannerid").val();
+    	$http.post("/api/banner/update",$scope.banner,{'Content-Type': 'application/json;charset=UTF-8'})
+    	.success(function(data){
+    		if(data.status=="0"){
+    			toastr.success("修改成功！");
+    			location.href="/web/system/banner/list";
+    			return;
+    		}else{
+    			toastr.error("修改失败！");
+    			return;
+    		}
+        	
+        	
+		})
+    }
+    
+    
+    
+});

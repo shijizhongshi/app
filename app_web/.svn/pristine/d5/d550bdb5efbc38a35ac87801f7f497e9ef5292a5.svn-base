@@ -1,0 +1,81 @@
+app.controller("UserPowerController", function($scope, $http){
+    //分页展示
+    //总条数
+    $scope.total = 0;
+    //当前的页数
+    $scope.current = 1;
+    //一页显示多少条
+    $scope.pageSize = 20;
+    
+    $scope.fromdate = "";
+    $scope.todate = "";
+
+    $scope.$watch('fromdate', function(v){
+    	$scope.endDateOptions.minDate = v;
+    });
+    $scope.$watch('todate', function(v){
+    	 $scope.startDateOptions.maxDate = v;
+    });
+    $scope.startDateOptions = {
+    	    formatYear: 'yy',
+    	    maxDate: $scope.todate,
+    	    startingDay: 1
+        };
+    $scope.endDateOptions = {
+	    formatYear: 'yy',
+	    minDate: $scope.fromdate,
+	    maxDate: new Date(),
+	    startingDay: 1
+    };
+    
+    $scope.openfromdatepicker = function(){
+        $scope.fromdatepickeropen = true;
+    };
+    $scope.opentodatepicker = function(){
+        $scope.todatepickeropen = true;
+        
+    };
+    
+    var formatDate=function(date){ 
+		if(date){
+		  	var y = date.getFullYear();  
+		    var m = date.getMonth() + 1;  
+		    m = m < 10 ? '0' + m : m;  
+		    var d = date.getDate();  
+		    d = d < 10 ? ('0' + d) : d;  
+		    return y + '-' + m + '-' + d;
+		} else{
+			return '';
+		}
+	      
+	}; 
+	
+    $scope.search = function(){
+    	$scope.loaddata();
+    }
+   
+    $scope.level="";
+    $scope.loaddata = function(){
+    	var from = ($scope.current - 1) * $scope.pageSize;
+        $http.get("/api/user/power/list", {"params": {"mobile":$("#mobile").val(),"level":$scope.level, "pageSize": $scope.pageSize,
+            "pageNo": from, "fromdate": formatDate($scope.fromdate), "todate":formatDate($scope.todate)}}, {'Content-Type': 'application/json;charset=UTF-8'})
+            .success(function(data){
+                if(data.status=="0"){
+                	$scope.useras = data.data;
+                	$scope.total = data.count;
+                	$scope.powerCount = data.powerCount;
+                    return;
+                }else{
+                    toastr.error(data.message);
+                }
+            }).error(function(data){
+                toastr.error(data.message);
+            });
+    };
+    
+    $scope.loaddata();
+    
+    
+    
+    
+});

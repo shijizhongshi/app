@@ -1,0 +1,627 @@
+package com.ola.qh.api;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ola.qh.dao.UserDao;
+import com.ola.qh.dao.UserTutorDao;
+import com.ola.qh.entity.User;
+import com.ola.qh.entity.UserAdd;
+import com.ola.qh.entity.UserBook;
+import com.ola.qh.entity.UserCommon;
+import com.ola.qh.entity.UserTutor;
+import com.ola.qh.util.Results;
+
+@RestController
+@RequestMapping("/api/user")
+public class UserApi
+{
+
+    @Autowired
+    private UserDao userDao;
+    
+   @Autowired
+   private UserTutorDao userTutorDao;
+  
+    
+    /**
+     * 推荐的合伙人列表
+     * @param userId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value="/detail/power",method=RequestMethod.GET)
+    public Results<User> powerdetail(
+	    @RequestParam(name = "powerUser", required = true) int powerUser,
+	    @RequestParam(name = "mobile", required = false) String mobile,
+	    @RequestParam(name="pageNo")int pageNo,@RequestParam(name="pageSize")int pageSize,
+	    @RequestParam(name = "fromdate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date fromdate,
+            @RequestParam(name = "todate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date todate){
+	Results<User> result = new Results<User>();
+	User user = new User();
+	user.setMobile(mobile);
+	user = userDao.singleUser(user);
+	
+	//总人数
+	int childCount = userDao.powercount(user.getInvitationCode(), 0,0, fromdate, todate,null);
+	List<User> list = userDao.powerList(null, 0,powerUser, pageNo, pageSize, null, null,user.getMobile());//该用户推荐的总的合伙人的集合
+	int total = userDao.powerListCount(null, 0,powerUser, null, null,user.getMobile());//该用户推荐的总的合伙人的条数
+	
+	    if(total>0){
+		for (User user2 : list)
+		{
+		    //分别的合伙人对应的人数
+		    int childCountz = userDao.powercount(user2.getInvitationCode(), 0,0, fromdate, todate,null);
+		    user2.setChildCountz(childCountz);
+		}
+	    }
+		user.setUserListz(list);
+		user.setUserCountz(childCount);
+		result.setCount(total);
+		result.setData(user);
+		result.setStatus("0");
+	return result;
+	
+    }
+    
+    
+    /**
+     * 合伙人对应的下线
+     * @param userId
+     * @param pageNo
+     * @param pageSize
+     * @param fromdate
+     * @param todate
+     * @param level
+     * @return
+     * @throws Exception 
+     */
+    @RequestMapping(value="/power/list",method=RequestMethod.GET)
+    public Results<User> powerlist(
+	    @RequestParam(name = "mobile", required = true) String mobile,
+	    @RequestParam(name="pageNo")int pageNo,
+	    @RequestParam(name="pageSize")int pageSize,
+	    @RequestParam(name = "fromdate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date fromdate,
+            @RequestParam(name = "todate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date todate,
+            @RequestParam(name="level",required= false) String level) throws Exception{
+	
+	
+	Results<User> result = new Results<User>();
+	User user = new User();
+	user.setMobile(mobile);
+	int levels;
+	user = userDao.singleUser(user);
+	
+	User us = new User();
+	if(!"".equals(user.getParentMobile()) && user.getParentMobile()!=null){
+	    us.setMobile(user.getParentMobile());
+		User u = userDao.singleUser(us);
+		if(u!=null){
+		    user.setNickName(u.getNickName());
+		    user.setHeadImgUrl(u.getHeadImgUrl());
+		}
+	}
+	
+	
+	if(!"".equals(level) && level!=null){
+	    levels = Integer.parseInt(level)*8;
+	}else{
+	    levels = 0; 
+	}
+	List<User> list = userDao.powerList(user.getInvitationCode(), levels,0, pageNo, pageSize, fromdate, todate,null);
+	if(list.size()>0){
+	    for (User user2 : list)
+		{
+		    user2.setLevel(user2.getParentInvitationCode().length()/8);
+		}
+	}
+	
+	
+	int count = userDao.powercount(user.getInvitationCode(), levels,0, fromdate, todate,null);
+	//总数	
+	int childCount = userDao.powercount(user.getInvitationCode(), 0,0, fromdate, todate,null);
+	
+	result.setCount(count);
+	result.setPowerCount(childCount);
+	user.setUserListz(list);
+	
+	result.setData(user);
+	//////////////////////////////查业绩完成
+	
+	result.setStatus("0");
+	return result;
+	
+    }
+    
+    /**
+     * 
+     * @param username 登陆的合伙人
+     * @param mobile 推荐用户的手机号
+     * @return
+     */
+    @RequestMapping(value="/child",method=RequestMethod.GET)
+    public Results<User> userChild(@RequestParam(name="username",required=true)String username,@RequestParam(name="invitationcode",required=false)String invitationcode,@RequestParam(name="mobile",required=false)String mobile){
+	
+	Results<User> result = new Results<User>();
+	User user=new User();
+	user.setMobile(username);
+	user = userDao.singleUser(user);
+	
+	if((mobile==null || mobile=="") && (invitationcode==null || invitationcode=="")){
+	    result.setMessage("手机号或者邀请码至少填一个");
+	    result.setStatus("1");
+	    return result;
+	}
+	
+	User us = new User();
+	us.setMobile(mobile);
+	us.setInvitationCode(invitationcode);
+	us.setParentInvitationCode(user.getInvitationCode());
+	User u = userDao.singleUser(us);
+	
+	
+	
+	if(u!=null){
+	    UserBook userBook = userDao.singleUserBook(u.getId());
+	    if(userBook!=null){
+		u.setMoney(userBook.getSumvirtual());
+	    }else{
+		u.setMoney(0);
+	    }
+	    result.setStatus("0");
+	    int userCountz =  userDao.selectUserCount(u.getId(), null);//直推总的个数
+	    u.setUserCountz(userCountz);
+	    result.setData(u);
+	    return result;
+	}
+	
+	result.setStatus("1");
+	result.setMessage("您无权查看不是您团队的店主");
+	return result;
+	
+    }
+    
+    /**
+     * 设置成为导师
+     * @param username
+     * @param tutorcode
+     * @return
+     */
+    @RequestMapping(value="/settutor",method=RequestMethod.GET)
+    public Results<String> setTutor(@RequestParam(name="username",required=true) String username,@RequestParam(name="tutorcode",required=true) String tutorcode,@RequestParam(name="tutorId",required=true) String tutorId){
+	
+	Results<String> result = new Results<String>();
+	User user = new User();
+	user.setMobile(username);
+	user= userDao.singleUser(user);
+	
+	//查一下   保证他不是导师
+	int numcount = userTutorDao.exiestTutor(tutorId);
+	
+	if(numcount==0){
+	    UserTutor userTutor = new UserTutor();
+		userTutor.setDirectorId(user.getId());
+		userTutor.setDirectorcode(user.getInvitationCode());
+		
+		userTutor.setTutorId(tutorId);
+		userTutor.setTutorcode(tutorcode);
+		
+		int num = userTutorDao.insert(userTutor);
+		
+		if(num>0){
+		    result.setStatus("0");
+		    result.setMessage("设置导师成功");
+		    return result;
+		}
+		result.setStatus("1");
+		result.setMessage("设置导师失败");
+		return result;
+	}
+	result.setStatus("1");
+	result.setMessage("该用户已经是导师了");
+	return result;
+	
+	
+    }
+    
+    
+    /**
+     * 导师的列表页
+     * @param username
+     * @return
+     */
+    @RequestMapping(value="/tutorlist",method=RequestMethod.GET)
+    public Results<List<UserTutor>> tutorlist(@RequestParam(name="username",required=true) String username,@RequestParam(name="pageNo",required=true) int pageNo,@RequestParam(name="pageSize",required=true) int pageSize){
+	
+	Results<List<UserTutor>> result = new Results<List<UserTutor>>();
+	User user = new User();
+	user.setMobile(username);
+	
+	user = userDao.singleUser(user);
+	
+	List<UserTutor> list = userTutorDao.list(user.getId(),pageNo,pageSize);
+	int count = userTutorDao.listcount(user.getId());
+	if(count>0){
+	    result.setData(list);
+		result.setCount(count);
+		result.setStatus("0");
+		return result;
+	}
+	
+		result.setStatus("1");
+		result.setMessage("现在还没有导师");
+		return result;
+	
+    }
+    
+    /**
+     * 移除导师操作
+     * @param tid
+     * @return
+     */
+    @RequestMapping(value="/outtutor",method=RequestMethod.GET)
+    public Results<String> outTutor(@RequestParam(name="tid",required=true) String tid){
+	
+	Results<String> request = new Results<String>();
+	
+	int num = userTutorDao.outTutor(tid);
+	if(num>0){
+	    request.setStatus("0");
+	    request.setMessage("移除成功");
+	    return request;
+	}
+	request.setStatus("1");
+	request.setMessage("移除失败");
+	return request;
+	
+    }
+    
+    
+    @RequestMapping(value="/tutorcommonlist",method=RequestMethod.GET)
+    public Results<List<UserCommon>> tutorcommonlist(
+	    @RequestParam(name="tutorId",required=true) String tutorId,
+	    @RequestParam(name ="fromdate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date fromdate,
+            @RequestParam(name ="todate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date todate,
+            @RequestParam(name="pageNo")int pageNo,
+	    @RequestParam(name="pageSize")int pageSize){
+	
+	Results<List<UserCommon>> result = new Results<List<UserCommon>>();
+	
+	List<UserCommon> list= userTutorDao.listCommon(tutorId,pageNo,pageSize,fromdate,todate);
+	
+	int count = userTutorDao.listCommonCount(tutorId, fromdate, todate);
+	
+	
+	    result.setStatus("0");
+	    result.setData(list);
+	    result.setCount(count);
+	    return result;
+	
+    }
+    
+    
+    /**
+     * 设置导师对应的业绩
+     * @param tutorId
+     * @param commonId
+     * @return
+     */
+    @RequestMapping(value="/settutordetail",method=RequestMethod.GET)
+    public Results<String> setTutorCommon(@RequestParam(name="tutorcode",required=true) String tutorcode,@RequestParam(name="commoncode",required=true) String commoncode){
+	
+	Results<String> result = new Results<String>();
+	
+	//tutorcode   必须存在于导师表     并且查出它对应的合伙人id
+	UserTutor userTutor = userTutorDao.singleTutor(tutorcode);
+	if(userTutor!=null){
+	    String directorcode =  userTutor.getDirectorcode();//合伙人的验证码
+	    
+	  //commoncode    是否是合伙人的子集     并且 他有且只有一个直推     并且不是导师
+	    
+	    User user = new User();
+	    user.setInvitationCode(commoncode);
+	    user.setParentInvitationCode(directorcode);
+	    User u = userDao.singleUser(user);
+	    if(u!=null){
+		
+		int num = userDao.selectUserCount(u.getId(), null);
+		UserTutor userTutors = userTutorDao.singleTutor(commoncode);
+		int numss = userTutorDao.singleCommonCount(commoncode);
+		if(num==1 && userTutors==null && numss==0){
+		  //然后将他们保存到   如果符合以上的条件的话   我们就将其保存到t_user_common表中
+		    UserCommon userCommon = new UserCommon();
+		    userCommon.setCommoncode(u.getInvitationCode());
+		    userCommon.setCommonnickname(u.getNickName());
+		    userCommon.setCommonheadurl(u.getHeadImgUrl());
+		    userCommon.setCommonId(u.getId());
+		    userCommon.setTutorcode(userTutor.getTutorcode());
+		    userCommon.setTutorId(userTutor.getTutorId());
+		    int nums = userTutorDao.insertCommon(userCommon);
+		    if(nums>0){
+			result.setStatus("0");
+			return result;
+		    }
+		    result.setStatus("1");
+		    result.setMessage("店主信息保存失败");
+		    return result;
+		}
+		result.setStatus("1");
+		result.setMessage("店主不满足条件，不能重复提交店主");
+		return result;
+		
+		
+	    }
+	    result.setStatus("1");
+	    result.setMessage("店主不属于本团队,请检查");
+	    return result;
+	    
+	    
+	}
+	result.setStatus("1");
+	result.setMessage("导师不存在,请检查");
+	return result;
+	
+	
+    }
+    
+    
+    
+    
+    
+public Results<String> toUserAdd(String userId) throws ParseException{
+	
+	Results<String> result = new Results<String>();
+	UserAdd userAdd = new UserAdd();
+	User user = new User();
+	user.setId(userId);
+	User u = userDao.singleUser(user);
+	Calendar cal=Calendar.getInstance();
+	cal.add(Calendar.DATE,-1);
+	Date time=cal.getTime();
+	SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+	Date today  = sf.parse((sf.format(time)));
+	
+	int todaysadd = userDao.powercount(u.getInvitationCode(), 0,0,today, new Date(), null);
+	
+	//上周新增
+	
+	Calendar date=Calendar.getInstance(Locale.CHINA);
+
+	date.setFirstDayOfWeek(Calendar.MONDAY);//将每周第一天设为星期一，默认是星期天
+
+	date.add(Calendar.WEEK_OF_MONTH,-1);//周数减一，即上周
+
+	date.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);//日子设为星期天
+
+	    
+	
+	
+	
+	
+	
+	
+	
+	
+	cal.add(Calendar.DATE, -7);
+	Date last=cal.getTime();
+	Date lastweek  = sf.parse((sf.format(last)));
+	int lastweekadd = userDao.powercount(u.getInvitationCode(), 0,0,lastweek, new Date(), null);
+	
+	//本月新增
+	cal.add(Calendar.MONTH, 0);
+	cal.set(Calendar.DAY_OF_MONTH,1);
+	int thismonthadd = userDao.powercount(u.getInvitationCode(), 0,0,cal.getTime(), new Date(), null);
+	
+	/////累计店主
+	int totalshop = userDao.powercount(u.getInvitationCode(), 0,0,null,null, null);
+	
+	userAdd.setUserId(userId);
+	userAdd.setTodaysadd(todaysadd);
+	userAdd.setLastweekadd(lastweekadd);
+	userAdd.setThismonthadd(thismonthadd);
+	userAdd.setTotalshop(totalshop);
+	userDao.toUserAdd(userAdd);
+	
+	
+	
+	return result;
+	
+	
+    }
+
+    /**
+     * 查出对应的业绩统计
+     * @param username
+     * @return
+     * @throws ParseException 
+     */
+    @RequestMapping(value="/profit",method=RequestMethod.GET)	
+    public Results<UserAdd> singleUserAdd(@RequestParam(name="username",required=true) String username) throws ParseException{
+	
+	Results<UserAdd> result = new Results<UserAdd>();
+	User user = new User();
+	user.setMobile(username);
+	
+	user = userDao.singleUser(user);
+	
+	
+	if(user!=null){
+	    UserAdd userAdd = new UserAdd();
+	    List<User> listpower = userDao.powerList(null, 0,1, 0, 0, null, null,user.getMobile());//该用户推荐的总的合伙人的集合
+	    
+	        Calendar cal=Calendar.getInstance();
+	        
+	        Calendar calendar = Calendar.getInstance();
+	        calendar.setTime(new Date());
+	        calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                Date zero = calendar.getTime();
+		//今日新增
+		//int todaysadd = userDao.powercount(user.getInvitationCode(), 0,0,zero, new Date(), null);
+                int todaysadd =userDao.countUserAdd(zero, new Date(), user.getId());
+                int todaysaddt =  userDao.sumTotal(zero, new Date(), 1, user.getId());
+		int referrertodaysadd =0;
+		int retodaysaddt =0;
+		for (User user2 : listpower)
+		{
+		    //int childCountz = userDao.powercount(user2.getInvitationCode(), 0,0, zero, new Date(),null);
+		    int childCountz =userDao.countUserAdd(zero, new Date(), user2.getId());
+		    referrertodaysadd+=childCountz;
+		    retodaysaddt+=userDao.sumTotal(zero, new Date(), 2, user2.getId());
+		}
+		
+		
+		
+		//上月的收益
+		//获取前一个月第一天
+	        Calendar calendar1 = Calendar.getInstance();
+	        calendar1.add(Calendar.MONTH, -1);
+	        calendar1.set(Calendar.DAY_OF_MONTH,1);
+	        calendar1.set(Calendar.HOUR_OF_DAY, 0);
+	        calendar1.set(Calendar.MINUTE, 0);
+	        calendar1.set(Calendar.SECOND, 0);
+	       
+	        Calendar calendar2 = Calendar.getInstance();
+	        calendar2.set(Calendar.DAY_OF_MONTH, 0);
+	        calendar2.set(Calendar.HOUR_OF_DAY, 0);
+	        calendar2.set(Calendar.MINUTE, 0);
+	        calendar2.set(Calendar.SECOND, 0);
+	       
+		
+		///int lastweekadd = userDao.powercount(user.getInvitationCode(), 0,0,c.getTime(), date.getTime(), null);
+		 int lastweekadd = userDao.countUserAdd(calendar1.getTime(), calendar2.getTime(), user.getId());
+		 int lastweekaddt =  userDao.sumTotal(calendar1.getTime(), calendar2.getTime(), 1, user.getId());
+		 int relastweekaddt=0;
+		 int referrerlastweekadd =0;
+		for (User user2 : listpower)
+		{
+		    //int childCountz = userDao.powercount(user2.getInvitationCode(), 0,0, c.getTime(),date.getTime(),null);
+		    int childCountz = userDao.countUserAdd(calendar1.getTime(), calendar2.getTime(), user2.getId());
+		    referrerlastweekadd+=childCountz;
+		    relastweekaddt+=userDao.sumTotal(calendar1.getTime(), calendar2.getTime(), 2, user2.getId());
+		}
+		
+		
+		
+		
+		//本月新增
+		cal.add(Calendar.MONTH, 0);
+		cal.set(Calendar.DAY_OF_MONTH,1);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		//int thismonthadd = userDao.powercount(user.getInvitationCode(), 0,0,cal.getTime(), new Date(), null);
+		int thismonthadd = userDao.countUserAdd(cal.getTime(), new Date(), user.getId());
+		
+		int thismonthaddt =  userDao.sumTotal(cal.getTime(), new Date(), 1, user.getId());
+		int rethismonthaddt=0;
+		int referrerthismonthadd =0;
+		for (User user2 : listpower)
+		{
+		    //int childCountz = userDao.powercount(user2.getInvitationCode(), 0,0, cal.getTime(), new Date(),null);
+		    int childCountz = userDao.countUserAdd(cal.getTime(), new Date(), user2.getId());
+		    referrerthismonthadd+=childCountz;
+		    
+		    rethismonthaddt+=userDao.sumTotal(cal.getTime(), new Date(), 2, user2.getId());
+		}
+		
+		/////累计店主
+		
+		
+		int totalshop = userDao.countUserAdd(null, null, user.getId());
+		int totalshopt=userDao.sumTotal(null, null, 1, user.getId());
+		int retotalshopt=0;
+		int referrertotalshop =0;
+		for (User user2 : listpower)
+		{
+		    int childCountz = userDao.countUserAdd(null, null, user2.getId());
+		    referrertotalshop+=childCountz;
+		    retotalshopt+=userDao.sumTotal(null, null, 2, user2.getId());
+		}
+		
+		
+		userAdd.setUserId(user.getId());
+		userAdd.setTodaysadd(todaysadd);
+		userAdd.setLastweekadd(lastweekadd);
+		userAdd.setThismonthadd(thismonthadd);
+		userAdd.setTotalshop(totalshop);
+		userAdd.setReferrertodaysadd(referrertodaysadd);
+		userAdd.setReferrerlastweekadd(referrerlastweekadd);
+		userAdd.setReferrerthismonthadd(referrerthismonthadd);
+		userAdd.setReferrertotalshop(referrertotalshop);
+		
+		
+		
+		//今天的收益
+		int itodaytotal=todaysaddt+retodaysaddt;
+	
+		userAdd.setTodaytotal(getTotal(itodaytotal));
+		
+		//上周的收益
+		int ilastweektotal=lastweekaddt+relastweekaddt;
+		
+		userAdd.setLastweektotal(getTotal(ilastweektotal));
+		
+		//这个月的收益
+		int ithismonthtotal=thismonthaddt+rethismonthaddt;
+		
+		userAdd.setThismonthtotal(getTotal(ithismonthtotal));
+		
+		//累计的收益
+		int ishoptotal=retotalshopt+totalshopt;
+		
+		userAdd.setShoptotal(getTotal(ishoptotal));
+		
+		
+		
+		
+	    
+	    userAdd.setNickName(user.getNickName());
+	    userAdd.setHeadImgUrl(user.getHeadImgUrl());
+	    
+	    if(user.getPowerUser()==1){
+		userAdd.setIdentity("合伙人");
+	    }
+	    
+	    result.setData(userAdd);
+	    result.setStatus("0");
+	    return result;
+	}
+	result.setStatus("1");
+	result.setMessage("登录过期，重新登录");
+	return result;
+    }
+    
+    
+    public static String getTotal(int total){
+	
+	String shoptotal;
+	
+	if(total>=10000 && total<100000000){
+	    shoptotal = String.valueOf((double)total/(double)10000)+"万";
+	}else if(total>=100000000){
+	    shoptotal = String.valueOf((double)total/(double)100000000)+"亿";
+	}else{
+	    shoptotal=String.valueOf(total);
+	}
+	
+	return shoptotal;
+	
+    }
+    
+      
+
+}

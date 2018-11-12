@@ -1,0 +1,172 @@
+package com.ola.qh.api;
+
+import java.util.Date;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ola.qh.dao.UserDao;
+import com.ola.qh.dao.UserLoginDao;
+import com.ola.qh.entity.User;
+import com.ola.qh.util.Results;
+
+@RestController
+@RequestMapping("/api/user")
+public class UserApi
+{
+
+    @Autowired
+    private UserDao userDao;
+    @Autowired
+    private UserLoginDao userLoginDao;
+
+
+   
+   
+    
+    
+    /**
+     * 推荐的招商总监列表
+     * @param userId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value="/detail/power",method=RequestMethod.GET)
+    public Results<User> powerdetail(@RequestParam(name = "userId", required = true) String userId,
+	    @RequestParam(name = "mobile", required = false) String mobile,
+	    @RequestParam(name="pageNo")int pageNo,@RequestParam(name="pageSize")int pageSize,
+	    @RequestParam(name = "fromdate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date fromdate,
+            @RequestParam(name = "todate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date todate){
+	Results<User> result = new Results<User>();
+	User user = new User();
+	if(userId.equals("1")){
+	    user.setMobile(mobile);
+	}else{
+	    user.setId(userId);
+	}
+	user = userDao.singleUser(user);
+	
+	//招商总监的总人数
+	int childCount = userDao.powercount(user.getInvitationCode(), 0, fromdate, todate,null);
+	List<User> list = userDao.powerList(null, 0, pageNo, pageSize, fromdate, todate,user.getMobile());//该用户推荐的总的招商总监的集合
+	int total = userDao.powercount(null, 0, fromdate, todate,user.getMobile());//该用户推荐的总的招商总监的条数
+	
+	    if(total>0){
+		for (User user2 : list)
+		{
+		    //分别的招商总监对应的人数
+		    int childCountz = userDao.powercount(user2.getInvitationCode(), 0, fromdate, todate,null);
+		    user2.setChildCountz(childCountz);
+		}
+	    }
+		user.setUserListz(list);
+		user.setUserCountz(childCount);
+		result.setCount(total);
+		result.setData(user);
+	return result;
+	
+    }
+    
+    
+    /**
+     * 招商总监对应的下线
+     * @param userId
+     * @param pageNo
+     * @param pageSize
+     * @param fromdate
+     * @param todate
+     * @param level
+     * @return
+     */
+    @RequestMapping(value="/power/list",method=RequestMethod.GET)
+    public Results<List<User>> powerlist(@RequestParam(name = "userId", required = true) String userId,
+	    @RequestParam(name = "mobile", required = false) String mobile,
+	    @RequestParam(name="pageNo")int pageNo,
+	    @RequestParam(name="pageSize")int pageSize,
+	    @RequestParam(name = "fromdate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date fromdate,
+            @RequestParam(name = "todate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date todate,
+            @RequestParam(name="level",required= false) String level){
+	
+	
+	Results<List<User>> result = new Results<List<User>>();
+	User user = new User();
+	if(userId.equals("1")){
+	    user.setMobile(mobile);
+	}else{
+	    user.setId(userId);
+	}
+	int levels;
+	user = userDao.singleUser(user);
+	if(!"".equals(level) && level!=null){
+	    levels = Integer.parseInt(level)*8;
+	}else{
+	    levels = 0; 
+	}
+	List<User> list = userDao.powerList(user.getInvitationCode(), levels, pageNo, pageSize, fromdate, todate,null);
+	if(list.size()>0){
+	    for (User user2 : list)
+		{
+		    user2.setLevel(user2.getParentInvitationCode().length()/8);
+		}
+	}
+	
+	
+	int count = userDao.powercount(user.getInvitationCode(), levels, fromdate, todate,null);
+	//总数	
+	int childCount = userDao.powercount(user.getInvitationCode(), 0, fromdate, todate,null);
+	
+	result.setCount(count);
+	result.setPowerCount(childCount);
+	result.setData(list);
+	result.setStatus("0");
+	return result;
+	
+    }
+    
+    /**
+     * 
+     * @param username 登陆的招商总监
+     * @param mobile 推荐用户的手机号
+     * @return
+     */
+    @RequestMapping(value="/child",method=RequestMethod.GET)
+    public Results<User> userChild(@RequestParam(name="username",required=true)String username,@RequestParam(name="invitationcode",required=false)String invitationcode,@RequestParam(name="mobile",required=false)String mobile){
+	
+	Results<User> result = new Results<User>();
+	User user=new User();
+	user.setMobile(username);
+	user = userDao.singleUser(user);
+	
+	if((mobile==null || mobile=="") && (invitationcode==null || invitationcode=="")){
+	    result.setMessage("手机号或者邀请码至少填一个");
+	    result.setStatus("1");
+	    return result;
+	}
+	
+	User us = new User();
+	us.setMobile(mobile);
+	us.setInvitationCode(invitationcode);
+	us.setParentInvitationCode(user.getInvitationCode());
+	User u = userDao.singleUser(us);
+	if(u!=null){
+	    result.setStatus("0");
+	    int userCountz =  userDao.selectUserCount(u.getId(), null);//直推总的个数
+	    u.setUserCountz(userCountz);
+	    result.setData(u);
+	    return result;
+	}
+	
+	result.setStatus("1");
+	result.setMessage("用户您无权查看该手机号或验证码");
+	return result;
+	
+    }
+
+  
+
+}

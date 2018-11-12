@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>设置导师团队</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+<meta name="keywords" content="" />
+<link href="/styles/login.css" rel='stylesheet' type='text/css' />
+<link rel="stylesheet" href="/assets/css/xenon-components.css">
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<!--webfonts-->
+<!--<link href='http://fonts.useso.com/css?family=PT+Sans:400,700,400italic,700italic|Oswald:400,300,700' rel='stylesheet' type='text/css'>-->
+<!--<link href='http://fonts.useso.com/css?family=Exo+2' rel='stylesheet' type='text/css'>-->
+<!--//webfonts-->
+<script src="/assets/js/jquery-1.11.1.min.js"></script>
+<script src="/assets/js/angular/angular.js"></script>
+<script src="/assets/js/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+<script src="/assets/js/toastr/toastr.min.js"></script>
+<script src="/assets/js/md5-min.js"></script>
+<script src="/scripts/app.js"></script>
+<script src="/scripts/user/setcommon.js"></script>
+</head>
+<body style="width:100%;min-height:924px;" ng-app="app">
+<!--SIGN UP-->
+<h1>导师业绩上报后台</h1>
+<div class="login-form" ng-controller="UserCommonController">
+	
+    <div class="clear"> </div>
+	<div class="avtar">
+		<img src="/images/avtar.png"/>
+	</div>
+    <form name="form" style="margin-top: 26px;">
+        <div ng-class="{'key': form.tutorcode.$invalid}">
+            <input type="text" name="tutorcode" class="text" ng-model="tutorcode" placeholder="导师邀请码" required>
+        </div>
+        <div ng-class="{'key': form.commoncode.$invalid}" style="margin-bottom:60px;">
+            <input type="text" name="commoncode" ng-model="commoncode" placeholder="店主邀请码" required>
+        </div>
+        <div class="signin">
+            <input type="submit" value="验证并提交" ng-click="submit()" style="-webkit-appearance:none;" ng-disabled="form.$invalid">
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

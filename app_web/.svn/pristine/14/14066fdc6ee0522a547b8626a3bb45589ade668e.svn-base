@@ -1,0 +1,577 @@
+package com.ola.qh.dao;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import com.ola.qh.entity.User;
+import com.ola.qh.entity.UserAdd;
+import com.ola.qh.entity.UserBook;
+
+@Repository
+public class UserDao
+{
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    /**
+     * 查邀请的列表
+     * 
+     * @param parentId
+     * @param parentParentId
+     * @return
+     */
+    public List<User> selectUserList(String parentId,int level,int pageNo,int pageSize,Date fromdate,Date todate)
+    {
+
+	StringBuffer sql = new StringBuffer();
+	sql.append("select tu.* from t_user tu left join t_shop ts on ts.user_id = tu.id  where 1=1");
+	List<Object> params = new ArrayList<Object>();
+	if (parentId != null && parentId != "")
+	{
+	    sql.append(" and tu.parent_id = ?");
+	    params.add(parentId);
+	}
+	if(fromdate!=null){
+	    sql.append(" and ts.create_time >= ?");
+	    params.add(fromdate);
+	}
+	if(todate!=null){
+	    sql.append(" and ts.create_time <=?");
+	    Calendar calendar=new GregorianCalendar(); 
+	    calendar.setTime(todate);
+	    calendar.add(calendar.DATE, 1);
+	    params.add(calendar.getTime());
+	}
+	// 按照时间的倒序排列
+	 sql.append(" order by ts.create_time desc");
+	if (pageSize != 0)
+	{
+	    sql.append(" limit ?,?");
+	    params.add(pageNo);
+	    params.add(pageSize);
+	}
+	List<User> users = jdbcTemplate.query(sql.toString(), params.toArray(), new BeanPropertyRowMapper<User>(User.class));
+	return users;
+
+    }
+    
+    /**
+     * 查直推和间推的人数
+     * 
+     * @param parentId
+     * @param parentParentId
+     * @return
+     */
+    public int selectUserCount(String parentId, String parentParentId)
+    {
+	StringBuffer sql = new StringBuffer();
+	sql.append("select count(*) from t_user where 1=1");
+	List<Object> params = new ArrayList<Object>();
+	if (parentId != null && parentId != "")
+	{
+	    sql.append(" and parent_id = ?");
+	    params.add(parentId);
+	}
+	if (parentParentId != null && parentParentId != "")
+	{
+	    sql.append(" and parent_parent_id = ?");
+	    params.add(parentParentId);
+	}
+	int num = jdbcTemplate.queryForObject(sql.toString(), params.toArray(), Integer.class);
+	return num;
+    }
+    
+    
+    /**
+     * 按条件查询集合
+     * @param mobile
+     * @param nickName
+     * @param invitationCode
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    
+    public List<User> selectList(String mobile,String nickName,String invitationCode,int pageNo, int pageSize,String powerUser)
+    {
+
+	StringBuffer sql = new StringBuffer();
+	sql.append("select * from t_user where 1=1");
+	List<Object> params = new ArrayList<Object>();
+	if(mobile!="" && mobile!=null){
+	    sql.append(" and mobile like ?");
+	    params.add("%" + mobile + "%");
+	}
+	if(nickName!=null && nickName!=""){
+	    sql.append(" and nick_name like ?");
+	    params.add("%" + nickName +"%");
+	}
+	if(invitationCode!=null && invitationCode!=""){
+	    sql.append(" and invitation_code like ?");
+	    params.add("%" + invitationCode + "%");
+	}
+	
+	
+	if(powerUser!=null && powerUser!=""){
+	    sql.append(" and power_user = ?");
+	    params.add(powerUser);
+	}
+	// 按照时间的倒序排列
+	sql.append(" order by create_time desc");
+	if (pageSize != 0)
+	{
+	    sql.append(" limit ?,?");
+	    params.add(pageNo);
+	    params.add(pageSize);
+	}
+	List<User> users = jdbcTemplate.query(sql.toString(), params.toArray(), new BeanPropertyRowMapper<User>(User.class));
+	return users;
+
+    }
+    
+   /**
+    *  按条件查询集合的个数（分页需要这个参数）
+    * @param mobile
+    * @param nickName
+    * @param invitationCode
+    * @return
+    */
+   public int selectListCount(String mobile, String nickName,String invitationCode){
+       StringBuffer sql = new StringBuffer();
+       sql.append("select count(id) from t_user where 1=1");
+       List<Object> params = new ArrayList<Object>();
+	if(mobile!="" && mobile!=null){
+	    sql.append(" and mobile like ?");
+	    params.add("%" + mobile + "%");
+	}
+	if(nickName!=null && nickName!=""){
+	    sql.append(" and nick_name like ?");
+	    params.add("%" + nickName +"%");
+	}
+	if(invitationCode!=null && invitationCode!=""){
+	    sql.append(" and invitation_code like ?");
+	    params.add("%" + invitationCode + "%");
+	}
+	
+	
+	return jdbcTemplate.queryForObject(sql.toString(), params.toArray(), Integer.class);
+       
+   }
+   
+   
+   
+   
+   public List<User> powerList(String parentInvitationCode,int level,int powerUser,int pageNo,int pageSize,Date fromdate,Date todate,String parentMobile){
+   
+       StringBuffer sql = new StringBuffer();
+       List<Object> params = new ArrayList<Object>();
+       sql.append("select tu.* from t_user tu left join t_shop ts on ts.user_id = tu.id where 1=1");
+       if(parentInvitationCode!=null && parentInvitationCode!=""){
+	   sql.append(" and tu.parent_invitation_code like ?");
+	   params.add(parentInvitationCode+"%");
+       }
+       if(level!=0){
+	   sql.append(" and length(tu.parent_invitation_code) = ?");
+	   params.add(level);
+       }
+       if(fromdate!=null){
+	   sql.append(" and ts.create_time >= ?");
+	   params.add(fromdate);
+       }
+       if(todate!=null){
+	   sql.append(" and ts.create_time <= ?");
+	   
+	   Calendar calendar=new GregorianCalendar(); 
+	    calendar.setTime(todate);
+	    calendar.add(calendar.DATE, 1);
+	    params.add(calendar.getTime());
+       }
+       if(parentMobile!=null && parentMobile!=""){
+	    sql.append(" and parent_mobile = ?");
+	    params.add(parentMobile);
+	    
+	}else{
+	    sql.append(" and ts.money >= 499");
+	}
+       if(powerUser!=0){
+	   sql.append(" and power_user=?");
+	   params.add(powerUser);
+       }
+       sql.append(" order by ts.create_time desc");
+       if(pageSize!=0){
+	   sql.append(" limit ?,?");
+	   params.add(pageNo);
+	   params.add(pageSize);
+       }
+       
+       return jdbcTemplate.query(sql.toString(), params.toArray(), new BeanPropertyRowMapper<User>(User.class));
+       
+   }
+   
+   
+   
+   public int powerListCount(String parentInvitationCode,int level,int powerUser,Date fromdate,Date todate,String parentMobile){
+       
+       StringBuffer sql = new StringBuffer();
+       List<Object> params = new ArrayList<Object>();
+       sql.append("select count(tu.id) from t_user tu left join t_shop ts on ts.user_id = tu.id where 1=1");
+       if(parentInvitationCode!=null && parentInvitationCode!=""){
+	   sql.append(" and tu.parent_invitation_code like ?");
+	   params.add(parentInvitationCode+"%");
+       }
+       if(level!=0){
+	   sql.append(" and length(tu.parent_invitation_code) = ?");
+	   params.add(level);
+       }
+       if(fromdate!=null){
+	   sql.append(" and ts.create_time >= ?");
+	   params.add(fromdate);
+       }
+       if(todate!=null){
+	   sql.append(" and ts.create_time <= ?");
+	   Calendar calendar=new GregorianCalendar(); 
+	    calendar.setTime(todate);
+	    calendar.add(calendar.DATE, 1);
+	    params.add(calendar.getTime());
+       }
+       if(parentMobile!=null && parentMobile!=""){
+	    sql.append("  and parent_mobile = ?");
+	    params.add(parentMobile);
+	}else{
+	    sql.append(" and ts.money >= 499");
+	}
+       if(powerUser!=0){
+	   sql.append(" and power_user = ?");
+	   params.add(powerUser);
+       }
+       
+        return jdbcTemplate.queryForObject(sql.toString(), params.toArray(), Integer.class);
+       
+   }
+   
+   
+   public int powercount(String parentInvitationCode,int level,int powerUser,Date fromdate,Date todate,String parentMobile){
+       StringBuffer sql = new StringBuffer();
+       List<Object> params = new ArrayList<Object>();
+       sql.append("select count(tu.id) from t_user tu left join t_shop ts on ts.user_id = tu.id where 1=1");
+       if(parentInvitationCode!=null && parentInvitationCode!=""){
+	   sql.append(" and tu.parent_invitation_code like ?");
+	   params.add(parentInvitationCode+"%");
+       }
+       if(level!=0){
+	   sql.append(" and length(tu.parent_invitation_code) = ?");
+	   params.add(level);
+       }
+       if(fromdate!=null){
+	   sql.append(" and ts.create_time >= ?");
+	   params.add(fromdate);
+       }
+       if(todate!=null){
+	   sql.append(" and ts.create_time <= ?");
+	   Calendar calendar=new GregorianCalendar(); 
+	    calendar.setTime(todate);
+	    calendar.add(calendar.DATE, 1);
+	    params.add(calendar.getTime());
+       }
+       if(parentMobile!=null && parentMobile!=""){
+	    sql.append("  and parent_mobile = ?");
+	    params.add(parentMobile);
+	}
+       if(powerUser!=0){
+	   sql.append(" and power_user = ?");
+	   params.add(powerUser);
+       }
+       
+	sql.append(" and ts.money >= 499 ");
+        return jdbcTemplate.queryForObject(sql.toString(), params.toArray(), Integer.class);
+       
+   }
+
+
+    /**
+     * 确保用户的唯一性
+     * 
+     * @param user
+     * @return
+     */
+    // 判断用户的唯一性
+    public int exists(User user)
+    {
+	StringBuffer sql = new StringBuffer();
+	sql.append("select count(id) from t_user");
+	sql.append(" where 1=1");
+	List<Object> params = new ArrayList<Object>();
+	if (user != null)
+	{
+	    if (user.getId() != null && user.getId() != "")
+	    {
+		sql.append(" and id = ?");
+		params.add(user.getId());
+	    }
+	    if (user.getMobile() != null && user.getMobile() != "")
+	    {
+		sql.append(" and mobile = ?");
+		params.add(user.getMobile());
+	    }
+	    if (user.getInvitationCode() != null && user.getInvitationCode() != "")
+	    {
+		sql.append(" and invitation_code = ?");
+		params.add(user.getInvitationCode());
+	    }
+	    if (user.getOpenId() != "" && user.getOpenId() != null)
+	    {
+		sql.append(" and open_id = ?");
+		params.add(user.getOpenId());
+	    }
+	    if(user.getParentMobile()!=null  && user.getParentMobile()!=""){
+		sql.append(" and mobile= ? and power_user = 1");
+		params.add(user.getParentMobile());
+	    }
+	}
+	int count = jdbcTemplate.queryForObject(sql.toString(), params.toArray(), Integer.class);
+	return count;
+
+    }
+
+    /**
+     * 查出的单个的用户对象
+     * 
+     * @param user
+     * @return
+     */
+    // 按条件查询单个的用户
+    public User singleUser(User user)
+    {
+
+	StringBuffer sb = new StringBuffer();
+	sb.append("select t.* from t_user t");
+	sb.append(" where 1=1");
+	List<Object> params = new ArrayList<Object>();
+	if (user != null)
+	{
+	    if (user.getId() != null && user.getId() != "")
+	    {
+		sb.append(" and t.id = ?");
+		params.add(user.getId());
+	    }
+	    if (user.getMobile() != null && user.getMobile() != "")
+	    {
+		sb.append(" and t.mobile = ?");
+		params.add(user.getMobile());
+	    }
+	    if (user.getInvitationCode() != null && user.getInvitationCode() != "")
+	    {
+		sb.append(" and t.invitation_code = ?");
+		params.add(user.getInvitationCode());
+	    }
+	    if(user.getParentInvitationCode()!=null && user.getParentInvitationCode()!=""){
+		sb.append(" and t.parent_invitation_code like ?");
+		params.add(user.getParentInvitationCode()+"%");
+	    }
+	}
+	List<User> oneUser = jdbcTemplate.query(sb.toString(), params.toArray(), new BeanPropertyRowMapper<User>(User.class));
+	if(oneUser.size()==1){
+	    return oneUser.get(0);
+	}
+	return null;
+
+    }
+
+    /**
+     * 修改用户的信息
+     * 
+     * @param u
+     * @return
+     */
+    // 修改用户的信息
+    public int update(User u)
+    {
+	StringBuffer sql = new StringBuffer();
+	sql.append("update t_user set ");
+	List<Object> params = new ArrayList<Object>();
+	if (u != null)
+	{
+	    if(u.getStatus()!=0){
+		sql.append(" status=?,");
+		params.add(u.getStatus());
+	    }
+	    if(u.getPowerUser()!=0){
+		sql.append("power_user=?,");
+		params.add(u.getPowerUser());
+	    }
+	    if(u.getParentMobile()!=null && u.getParentMobile()!=""){
+		sql.append("parent_mobile=?,");
+		params.add(u.getParentMobile());
+	    }
+	    if(u.getInvitationCode()!=null && u.getInvitationCode()!=""){
+		sql.append("invitation_code=?,");
+		params.add(u.getInvitationCode());
+	    }
+	   
+	}
+	sql.append(" last_time=?");
+	params.add(new Date());
+
+	sql.append(" where id=?");
+	params.add(u.getId());
+
+	int count = jdbcTemplate.update(sql.toString(), params.toArray());
+
+	return count;
+    }
+
+    /**
+     * 店铺的额度值增加
+     * 
+     * @param site
+     * @return
+     */
+    public int getProfit(int site)
+    {
+	String sql = "select profit from t_profit where site=" + site;
+	int profit = jdbcTemplate.queryForObject(sql, Integer.class);
+	return profit;
+    }
+
+    
+    
+    
+    /**
+     * 
+     * @param userId
+     * @return
+     */
+    public UserBook singleUserBook(String userId)
+    {
+	String sql ="select * from t_user_book where user_id ="+userId;
+	List<UserBook> list = jdbcTemplate.query(sql, new BeanPropertyRowMapper<UserBook>(UserBook.class));
+	if(list.size()>0){
+	    return list.get(0);
+	}
+	return null;
+    }
+    
+    
+    
+    
+    public int toUserAdd(UserAdd userAdd){
+   	String sql="insert into t_user_add(todaysadd,lastweekadd,thismonthadd,totalshop,referrertodaysadd,referrerlastweekadd,referrerthismonthadd,referrertotalshop,user_id) values(?,?,?,?,?,?,?,?,?)";
+   	Object[] params = new Object[]{
+   		userAdd.getTodaysadd(),userAdd.getLastweekadd(),userAdd.getThismonthadd(),userAdd.getTotalshop(),userAdd.getReferrertodaysadd(),
+   		userAdd.getReferrerlastweekadd(),userAdd.getReferrerthismonthadd(),userAdd.getReferrertotalshop(),userAdd.getUserId()
+   	};
+   	return jdbcTemplate.update(sql, params);
+   	
+       }
+    
+    
+    public UserAdd singleUserAdd(String userId){
+	String sql="select * from t_user_add where user_id="+userId;
+	List<UserAdd> list = jdbcTemplate.query(sql, new BeanPropertyRowMapper<UserAdd>(UserAdd.class));
+	if(list.size()==1){
+	    return list.get(0);
+	}
+	return null;
+	
+    }
+    
+    
+    
+    public int countUserAdd(Date fromdate,Date todate,String userId){
+	
+	
+	StringBuffer sql=new StringBuffer();
+	List<Object> params = new ArrayList<Object>();
+	sql.append("select count(id) from t_user_add where 1=1");
+	if(userId!=null && !"".equals(userId)){
+	    sql.append(" and user_id=?");
+	    params.add(userId);
+	}
+	if(fromdate!=null){
+	    sql.append(" and addtime>=?");
+	    params.add(fromdate);
+	}
+	if(todate!=null){
+	    sql.append(" and addtime<?");
+	    Calendar calendar=new GregorianCalendar(); 
+	    calendar.setTime(todate);
+	    calendar.add(calendar.DATE, 1);
+	    params.add(calendar.getTime());
+	}
+	Integer num = jdbcTemplate.queryForObject(sql.toString(), params.toArray(), Integer.class);
+	if(num!=null){
+	    return num.intValue();
+	}
+	return 0;
+	
+    }
+    
+    
+    public int sumTotal(Date fromdate,Date todate,int type,String userId){
+	StringBuffer sql=new StringBuffer();
+	List<Object> params = new ArrayList<Object>();
+	if(type==1){
+	    sql.append("select sum(directly_total) from t_user_add where 1=1");
+	}
+	if(type==2){
+	    sql.append("select sum(referrer_total) from t_user_add where 1=1");
+	}
+	if(type==3){
+	    sql.append("select sum(sales_total) from t_user_add where 1=1 and sales="+1);
+	}
+	
+	if(userId!=null && !"".equals(userId)){
+	    sql.append(" and user_id=?");
+	    params.add(userId);
+	}
+	if(fromdate!=null){
+	    sql.append(" and addtime>=?");
+	    params.add(fromdate);
+	}
+	if(todate!=null){
+	    sql.append(" and addtime<?");
+	    Calendar calendar=new GregorianCalendar(); 
+	    calendar.setTime(todate);
+	    calendar.add(calendar.DATE, 1);
+	    params.add(calendar.getTime());
+	}
+	if(type==3){
+	    Double ssss= jdbcTemplate.queryForObject(sql.toString(), params.toArray(), Double.class);
+	    if(ssss!=null){
+		 return (int)(ssss*100);
+	    }
+	    return 0;
+	   
+	}
+	Integer num = jdbcTemplate.queryForObject(sql.toString(), params.toArray(), Integer.class);
+	if(num!=null){
+	    return num.intValue();
+	}else{
+	    return 0;
+	}
+	
+	
+    }
+    
+    
+    public int updateUserAdd(UserAdd userAdd){
+	
+	String sql="update t_user_add set todaysadd=?,lastweekadd=?,thismonthadd=?,totalshop=?,referrertodaysadd=?,referrerlastweekadd=?,referrerthismonthadd=?,referrertotalshop=? where user_id="+userAdd.getUserId();
+	Object[] params = new Object[]{userAdd.getTodaysadd(),userAdd.getLastweekadd(),userAdd.getThismonthadd(),userAdd.getTotalshop(),userAdd.getReferrertodaysadd(),userAdd.getReferrerlastweekadd(),
+		userAdd.getReferrerthismonthadd(),userAdd.getReferrertotalshop()};
+	
+	
+	return jdbcTemplate.update(sql, params);
+	
+    }
+
+}

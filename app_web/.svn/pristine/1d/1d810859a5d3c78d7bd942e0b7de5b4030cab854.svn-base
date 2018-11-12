@@ -1,0 +1,98 @@
+app.controller("UserTutorController", function($scope, $http){
+   
+    
+    $scope.search = function(){
+        $http.get("/api/user/child", {"params": {"mobile":$scope.mobile,"username":$("#username").val(),"invitationcode":$scope.invitationcode}}, {'Content-Type': 'application/json;charset=UTF-8'})
+            .success(function(data){
+                if(data.status=="0"){
+                	$scope.user = data.data;
+                	$scope.shows=true;
+                    return;
+                }else{
+                    alert(data.message);
+                    return;
+                }
+            }).error(function(data){
+            	alert(data.message);
+            	return;
+            });
+    };
+    
+    
+    	$scope.shows=false;
+    
+    
+   
+    	$scope.setTutor = function(tutorcode,tutorId){
+    		$http.get("/api/user/settutor", {"params": {"username":$("#username").val(),"tutorcode":tutorcode,"tutorId":tutorId}}, {'Content-Type': 'application/json;charset=UTF-8'})
+            .success(function(data){
+                if(data.status=="0"){
+                	alert(data.message);
+                	location.reload(); 
+                    return;
+                }else{
+                    alert(data.message);
+                    return;
+                }
+            }).error(function(data){
+            	alert(data.message);
+            	return;
+            });
+    		
+    		
+    	}
+    	
+    	 //分页展示
+        //总条数
+        $scope.total = 0;
+        //当前的页数
+        $scope.current = 1;
+        //一页显示多少条
+        $scope.pageSize = 20;
+        
+        
+    	//导师列表页==================================================
+    	 $scope.loaddata = function(){
+    	    	var from = ($scope.current - 1) * $scope.pageSize;
+    	        $http.get("/api/user/tutorlist", {"params": {"username":$("#username").val(),"pageSize": $scope.pageSize,"pageNo": from}}, {'Content-Type': 'application/json;charset=UTF-8'})
+    	            .success(function(data){
+    	                if(data.status=="0"){
+    	                	$scope.users = data.data;
+    	                	$scope.total = data.count;
+    	                    return;
+    	                }
+    	            })
+    	    };
+    	    
+    	    
+    	    $scope.loaddata();
+    	    
+    
+    
+    	    
+    	    //移除导师==================================================
+    	    $scope.outTutor = function(id){
+    	    	$http.get("/api/user/outtutor", {"params": {"tid":id}}, {'Content-Type': 'application/json;charset=UTF-8'})
+                .success(function(data){
+                    if(data.status=="0"){
+                    	alert(data.message);
+                    	location.reload(); 
+                        return;
+                    }else{
+                        alert(data.message);
+                        return;
+                    }
+                }).error(function(data){
+                	alert(data.message);
+                	return;
+                });
+    	    }
+    	    
+    	    
+    	    
+    	    $scope.detail = function(tutorId){
+    	    	location.href="/web/user/tutorcommon?tutorId="+tutorId;
+    	    }
+    
+});
+

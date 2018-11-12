@@ -1,0 +1,62 @@
+.pagination{
+    float: right;
+}
+.modal-backdrop{
+    z-index: 0 !important;
+}
+.accountoverview .xe-label {
+    padding: 60px 0 60px 0!important;
+    text-align: center;
+    font-size: 40px;
+}
+
+.accountoverview .xe-label .num{
+    font-size: 40px !important;
+}
+
+.accountoverview .xe-lower {
+    padding: 0px 30px 30px !important;
+    text-align: right;
+    font-size: 16px !important;
+}
+
+.accountoverview .xe-lower strong {
+    font-size: 16px !important;
+}
+div[uib-datepicker-popup-wrap]{
+    display: inline !important;
+}
+
+.form-group label{
+    height: 32px;
+    line-height: 32px;
+}
+.form-group label.selected {
+    background-color: #68b828;
+    color: white;
+}
+.form-group label.logtype{
+    padding: 0 10px;
+}
+
+.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control{
+    cursor: default !important;
+}
+
+.icheck-inline{
+	float:left;
+	margin-right:10px;
+	margin-top: 10px;
+    height: 20px;
+}
+
+.idcard-img{
+    width: 190px;
+    min-height: 104px;
+    border: 1px solid gray;
+    margin-bottom: 10px;
+}
+
+.idcard-img img{
+	with:190px;
+}

@@ -1,0 +1,103 @@
+package com.ola.qh.entity;
+
+public class UserTutor
+{
+    private String id;
+    
+    private String directorId;//招商总监的id
+    
+    private String directorcode;//招商总监的邀请码
+    
+    private String tutorId;//导师的id
+    
+    private String tutorcode;//导师的邀请码
+    
+    private String mobile;//
+    
+    private String nickName;//s
+    
+    private String invitationCode;//
+
+    public String getId()
+    {
+        return id;
+    }
+
+    public void setId(String id)
+    {
+        this.id = id;
+    }
+
+    public String getDirectorId()
+    {
+        return directorId;
+    }
+
+    public void setDirectorId(String directorId)
+    {
+        this.directorId = directorId;
+    }
+
+    public String getDirectorcode()
+    {
+        return directorcode;
+    }
+
+    public void setDirectorcode(String directorcode)
+    {
+        this.directorcode = directorcode;
+    }
+
+    public String getTutorId()
+    {
+        return tutorId;
+    }
+
+    public void setTutorId(String tutorId)
+    {
+        this.tutorId = tutorId;
+    }
+
+    public String getTutorcode()
+    {
+        return tutorcode;
+    }
+
+    public void setTutorcode(String tutorcode)
+    {
+        this.tutorcode = tutorcode;
+    }
+
+    public String getMobile()
+    {
+        return mobile;
+    }
+
+    public void setMobile(String mobile)
+    {
+        this.mobile = mobile;
+    }
+
+    public String getNickName()
+    {
+        return nickName;
+    }
+
+    public void setNickName(String nickName)
+    {
+        this.nickName = nickName;
+    }
+
+    public String getInvitationCode()
+    {
+        return invitationCode;
+    }
+
+    public void setInvitationCode(String invitationCode)
+    {
+        this.invitationCode = invitationCode;
+    }
+
+    
+
+}

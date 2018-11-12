@@ -1,0 +1,357 @@
+package com.ola.qh.entity;
+
+import java.util.List;
+
+public class User
+{
+
+    private String id;
+
+    private String mobile;
+
+    private String nickName;
+
+    private String password;
+
+    private String wxAccount;
+
+    private String code;
+
+    private String invitationCode;
+
+    private String headImgUrl;
+
+    private String mood;
+    
+    private int powerUser;//0:是普通用户   1:招商总监     2：董事
+
+    private String token;
+
+    private List<User> userListz;
+
+    private List<User> userListj;
+
+    private int userCountz;
+
+    private int userCountj;
+
+    private int childCountz;//
+
+    private String openId;
+
+    private int parentId;// 直推用户的id
+    
+    private String parentNickname;//直推的昵称
+    
+    private String parentHeadImgUrl;//直推的头像
+
+    private int parentParentId;// 间推用户的id
+
+    private String Md5Str;
+    
+    public int status;//1:正常   2;禁用
+        
+    public int levelRecommended;//级别推见总数
+    
+    public int level;//级别
+    
+    private String parentInvitationCode;
+    
+    private String parentMobile;
+    
+    private int money;//可用的金额
+
+    private int virtualMoney;//总的额度
+    
+
+    public int getMoney()
+    {
+        return money;
+    }
+
+    public void setMoney(int money)
+    {
+        this.money = money;
+    }
+
+    public int getVirtualMoney()
+    {
+        return virtualMoney;
+    }
+
+    public void setVirtualMoney(int virtualMoney)
+    {
+        this.virtualMoney = virtualMoney;
+    }
+
+    public String getParentMobile()
+    {
+        return parentMobile;
+    }
+
+    public void setParentMobile(String parentMobile)
+    {
+        this.parentMobile = parentMobile;
+    }
+
+    public int getPowerUser()
+    {
+        return powerUser;
+    }
+
+    public void setPowerUser(int powerUser)
+    {
+        this.powerUser = powerUser;
+    }
+
+    public String getParentInvitationCode()
+    {
+        return parentInvitationCode;
+    }
+
+    public void setParentInvitationCode(String parentInvitationCode)
+    {
+        this.parentInvitationCode = parentInvitationCode;
+    }
+
+    public int getLevelRecommended()
+    {
+        return levelRecommended;
+    }
+
+    public void setLevelRecommended(int levelRecommended)
+    {
+        this.levelRecommended = levelRecommended;
+    }
+
+    public int getLevel()
+    {
+        return level;
+    }
+
+    public void setLevel(int level)
+    {
+        this.level = level;
+    }
+
+    public String getParentHeadImgUrl()
+    {
+        return parentHeadImgUrl;
+    }
+
+    public void setParentHeadImgUrl(String parentHeadImgUrl)
+    {
+        this.parentHeadImgUrl = parentHeadImgUrl;
+    }
+
+    public String getParentNickname()
+    {
+        return parentNickname;
+    }
+
+    public void setParentNickname(String parentNickname)
+    {
+        this.parentNickname = parentNickname;
+    }
+
+    public int getStatus()
+    {
+        return status;
+    }
+
+    public void setStatus(int status)
+    {
+        this.status = status;
+    }
+
+    public String getMd5Str()
+    {
+	return Md5Str;
+    }
+
+    public void setMd5Str(String md5Str)
+    {
+	Md5Str = md5Str;
+    }
+
+    public int getParentId()
+    {
+	return parentId;
+    }
+
+    public void setParentId(int parentId)
+    {
+	this.parentId = parentId;
+    }
+
+    public int getParentParentId()
+    {
+	return parentParentId;
+    }
+
+    public void setParentParentId(int parentParentId)
+    {
+	this.parentParentId = parentParentId;
+    }
+
+    public String getOpenId()
+    {
+	return openId;
+    }
+
+    public void setOpenId(String openId)
+    {
+	this.openId = openId;
+    }
+
+    public int getChildCountz()
+    {
+	return childCountz;
+    }
+
+    public void setChildCountz(int childCountz)
+    {
+	this.childCountz = childCountz;
+    }
+
+    public List<User> getUserListz()
+    {
+	return userListz;
+    }
+
+    public void setUserListz(List<User> userListz)
+    {
+	this.userListz = userListz;
+    }
+
+    public List<User> getUserListj()
+    {
+	return userListj;
+    }
+
+    public void setUserListj(List<User> userListj)
+    {
+	this.userListj = userListj;
+    }
+
+    public int getUserCountz()
+    {
+	return userCountz;
+    }
+
+    public void setUserCountz(int userCountz)
+    {
+	this.userCountz = userCountz;
+    }
+
+    public int getUserCountj()
+    {
+	return userCountj;
+    }
+
+    public void setUserCountj(int userCountj)
+    {
+	this.userCountj = userCountj;
+    }
+
+    public String getToken()
+    {
+	return token;
+    }
+
+    public void setToken(String token)
+    {
+	this.token = token;
+    }
+
+    public String getHeadImgUrl()
+    {
+	return headImgUrl;
+    }
+
+    public void setHeadImgUrl(String headImgUrl)
+    {
+	this.headImgUrl = headImgUrl;
+    }
+
+    public String getMood()
+    {
+	return mood;
+    }
+
+    public void setMood(String mood)
+    {
+	this.mood = mood;
+    }
+
+    public String getId()
+    {
+	return id;
+    }
+
+    public void setId(String id)
+    {
+	this.id = id;
+    }
+
+    public String getMobile()
+    {
+	return mobile;
+    }
+
+    public void setMobile(String mobile)
+    {
+	this.mobile = mobile;
+    }
+
+    public String getNickName()
+    {
+	return nickName;
+    }
+
+    public void setNickName(String nickName)
+    {
+	this.nickName = nickName;
+    }
+
+    public String getPassword()
+    {
+	return password;
+    }
+
+    public void setPassword(String password)
+    {
+	this.password = password;
+    }
+
+    public String getWxAccount()
+    {
+	return wxAccount;
+    }
+
+    public void setWxAccount(String wxAccount)
+    {
+	this.wxAccount = wxAccount;
+    }
+
+    public String getCode()
+    {
+	return code;
+    }
+
+    public void setCode(String code)
+    {
+	this.code = code;
+    }
+
+    public String getInvitationCode()
+    {
+	return invitationCode;
+    }
+
+    public void setInvitationCode(String invitationCode)
+    {
+	this.invitationCode = invitationCode;
+    }
+
+}

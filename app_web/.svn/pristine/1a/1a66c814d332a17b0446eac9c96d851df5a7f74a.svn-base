@@ -1,0 +1,17 @@
+package com.ola.qh.web.admin;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+@Controller
+@RequestMapping("/web/director/")
+public class DirectorUser
+{
+    @RequestMapping(value="login",method=RequestMethod.GET)
+    public String login(){
+	
+	return "director/login";
+	
+    }
+
+}

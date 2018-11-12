@@ -1,0 +1,162 @@
+package com.ola.qh.dao;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import com.ola.qh.entity.UserCommon;
+import com.ola.qh.entity.UserTutor;
+
+@Repository
+public class UserTutorDao
+{
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+    
+    
+    public int insert(UserTutor userTutor){
+	String sql="insert into t_user_tutor(directorId,directorcode,tutorId,tutorcode,create_time) values(?,?,?,?,?)";
+	Object[] params = new Object[]{userTutor.getDirectorId(),userTutor.getDirectorcode(),userTutor.getTutorId(),userTutor.getTutorcode(),
+		new Date()};
+	return jdbcTemplate.update(sql, params);
+    }
+    
+    public int outTutor(String id){
+	String sql="delete from t_user_tutor where id="+id;
+	
+	return jdbcTemplate.update(sql);
+	
+    }
+    public List<UserTutor> list(String directorId,int pageNo,int pageSize){
+	
+	String sql = "select tut.*,tu.mobile,tu.nick_name from t_user_tutor tut left join t_user tu on tu.id = tut.directorId where tut.directorId="+directorId +" order by tut.create_time desc limit "+pageNo+","+pageSize;
+   
+	List<UserTutor> list = jdbcTemplate.query(sql, new BeanPropertyRowMapper<UserTutor>(UserTutor.class));
+	return list;
+    
+    }
+    
+    public int exiestTutor(String tutorId){
+	
+	String sql = "select count(tut.id) from t_user_tutor tut where tut.tutorId="+tutorId;
+	   
+	return jdbcTemplate.queryForObject(sql, Integer.class);
+	
+    }
+    
+    
+    
+    /**
+     * 查询导师的code存不存在
+     * @param tutorcode
+     * @return
+     */
+    public UserTutor singleTutor(String tutorcode){
+	String sql = "select * from t_user_tutor where tutorcode=?";
+	Object[] params =new Object[]{tutorcode};
+	List<UserTutor> list = jdbcTemplate.query(sql,params, new BeanPropertyRowMapper<UserTutor>(UserTutor.class));
+	if(list.size()==1){
+	    return list.get(0);
+	}
+	return null;
+    }
+    
+    
+    
+    
+    public int listcount(String directorId){
+	
+	String sql = "select count(id) from t_user_tutor where directorId="+directorId;
+   
+	return jdbcTemplate.queryForObject(sql, Integer.class);
+    
+    }
+    
+    
+    
+    //==================================导师业绩的信息
+    
+    
+    public int insertCommon(UserCommon userCommon){
+	String sql="insert into t_user_common(commonId,commoncode,commonnickname,commonheadurl,tutorId,tutorcode,create_time) values(?,?,?,?,?,?,?)";
+	Object[] params = new Object[]{
+		userCommon.getCommonId(),userCommon.getCommoncode(),userCommon.getCommonnickname(),userCommon.getCommonheadurl(),userCommon.getTutorId(),
+		userCommon.getTutorcode(),new Date()
+	};
+	return jdbcTemplate.update(sql, params);
+	
+    }
+    
+    
+    
+    public List<UserCommon> listCommon(String tutorId,int pageNo,int pageSize,Date fromdate,Date todate){
+	
+	StringBuffer sql = new StringBuffer();
+	List<Object> params = new ArrayList<Object>();
+	sql.append("select * from t_user_common where tutorId="+tutorId);
+	if(fromdate!=null){
+	    sql.append(" and create_time >=?");
+	    params.add(fromdate);
+	}
+	if(todate!=null){
+	    sql.append(" and create_time<=?");
+	    Calendar calendar=new GregorianCalendar(); 
+	    calendar.setTime(todate);
+	    calendar.add(calendar.DATE, 1);
+	    params.add(calendar.getTime());
+	}
+	sql.append(" order by create_time desc");
+	
+	sql.append(" limit ?,?");
+	params.add(pageNo);
+	params.add(pageSize);
+	
+	return jdbcTemplate.query(sql.toString(),params.toArray(), new BeanPropertyRowMapper<UserCommon>(UserCommon.class));
+	
+    }
+    
+    public int listCommonCount(String tutorId,Date fromdate,Date todate){
+	
+	StringBuffer sql = new StringBuffer();
+	List<Object> params = new ArrayList<Object>();
+	sql.append("select count(id) from t_user_common where tutorId="+tutorId);
+	if(fromdate!=null){
+	    sql.append(" and create_time >=?");
+	    params.add(fromdate);
+	}
+	if(todate!=null){
+	    sql.append(" and create_time<=?");
+	    Calendar calendar=new GregorianCalendar(); 
+	    calendar.setTime(todate);
+	    calendar.add(calendar.DATE, 1);
+	    params.add(calendar.getTime());
+	}
+	
+	return jdbcTemplate.queryForObject(sql.toString(),params.toArray(), Integer.class);
+	
+    }
+    
+    public int singleCommonCount(String commoncode){
+	String sql="select count(id) from t_user_common where commoncode=?";
+	Object[] params = new Object[]{commoncode};
+	return jdbcTemplate.queryForObject(sql, params, Integer.class);
+    }
+    
+    //移除店主
+    public int deletecommon(String id){
+	String sql="delete from t_user_common where id="+id;
+	return jdbcTemplate.update(sql);
+    }
+    
+    
+    
+    
+
+}

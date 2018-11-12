@@ -1,0 +1,27 @@
+app.controller("UserChildController", function($scope, $http){
+   
+    $scope.user ={};
+    $scope.search = function(){
+    	var from = ($scope.current - 1) * $scope.pageSize;
+        $http.get("/api/user/child", {"params": {"mobile":$scope.mobile,"username":$("#username").val(),"invitationcode":$scope.invitationcode}}, {'Content-Type': 'application/json;charset=UTF-8'})
+            .success(function(data){
+                if(data.status=="0"){
+                	$scope.user = data.data;
+                    return;
+                }else{
+                    alert(data.message);
+                    return;
+                }
+            }).error(function(data){
+            	alert(data.message);
+            	return;
+            });
+    };
+    
+   
+    
+    
+    
+    
+});
+

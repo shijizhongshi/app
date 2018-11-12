@@ -1,0 +1,19 @@
+app.controller("UserLoginController", function($scope, $http){
+    $scope.user = {};
+
+    $scope.submit = function(){
+        
+        $http.post("/api/user/login", $scope.user, {'Content-Type': 'application/json;charset=UTF-8'})
+            .success(function(data){
+                if(data.status=="0"){
+                	alert("登陆成功！");
+                    location.href="/web/user/business";
+                    return;
+                }else{
+                    alert(data.message);
+                }
+            }).error(function(data){
+                alert(data.message);
+            });
+    };
+});

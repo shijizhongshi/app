@@ -1,0 +1,69 @@
+package com.ola.qh.util;
+
+public class Results<T>
+{
+
+    private String status;
+
+    private T data;
+
+    private String message;
+    
+    private int count;
+    
+    private int powerCount;
+    
+    
+
+    public int getPowerCount()
+    {
+        return powerCount;
+    }
+
+    public void setPowerCount(int powerCount)
+    {
+        this.powerCount = powerCount;
+    }
+
+    public String getStatus()
+    {
+	return status;
+    }
+
+    public void setStatus(String status)
+    {
+	this.status = status;
+    }
+
+    public T getData()
+    {
+	return data;
+    }
+
+    public void setData(T data)
+    {
+	this.data = data;
+    }
+
+    
+    public int getCount()
+    {
+        return count;
+    }
+
+    public void setCount(int count)
+    {
+        this.count = count;
+    }
+
+    public String getMessage()
+    {
+	return message;
+    }
+
+    public void setMessage(String message)
+    {
+	this.message = message;
+    }
+
+}

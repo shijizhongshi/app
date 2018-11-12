@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>业绩统计</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+</head>
+<script src="/assets/js/jquery-1.11.1.min.js"></script>
+<script src="/assets/js/angular/angular.js"></script>
+<script src="/assets/js/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+<script src="/assets/js/toastr/toastr.min.js"></script>
+<script src="/assets/js/md5-min.js"></script>
+<script src="/scripts/app.js"></script>
+
+<script src="/scripts/user/profit.js"></script>
+
+<link rel="stylesheet" href="/styles/reset.css">
+<link rel="stylesheet" href="/styles/style.css">
+
+<body ng-app="app">
+
+	<div class="statistic-container" ng-controller="UserProfitController">
+	<input type="hidden" value="${username}" id="username">
+		<section class="user-info">
+			<div class="user-pic fl">
+			<img src="{{useradd.headImgUrl}}" ng-show="useradd.headImgUrl!=null">
+				<img src="/images/img1.png" ng-show="useradd.headImgUrl==null">
+				
+			</div>
+			<div class="user-infos fl">
+				<p class="user-name" style="font-size:18px;">{{useradd.nickName}}</p>
+				<p style="font-size:14px;">{{useradd.identity}}</p>
+			</div>
+		</section>
+		<div class="cl"></div>
+		<section class="statistics common-list">
+			<ul>
+				<li>
+					<p>{{useradd.todaytotal}}元</p>
+					<span class="red">今日收益</span>
+				</li>
+				<li style="float: left;width: 0.8%;">
+				    <img src="/images/fenge.jpg" style="height:50px;"/>
+				</li>
+				<li>
+					<p>{{useradd.lastweektotal}}元</p>
+					<span class="orange">上月收益</span>
+				</li>
+				<li style="float: left;width: 0.8%;">
+				    <img src="/images/fenge.jpg" style="height:50px;"/>
+				</li>
+				<li>
+					<p>{{useradd.thismonthtotal}}元</p>
+					<span class="green">本月收益</span>
+				</li>
+				<li style="float: left;width: 0.8%;">
+				    <img src="/images/fenge.jpg" style="height:50px;"/>
+				</li>
+				<li class="last-one">
+					<p>{{useradd.shoptotal}}元</p>
+					<span class="blue">累计收益</span>
+				</li>
+
+			</ul>
+		</section>
+		<div class="cl"></div>
+		<div class="team-content">
+			<div class="total-title">
+				<img class="fl" src="/images/img2.png" alt="">
+				<p class="fl">团队店主数据</p>
+			</div>
+			<div class="cl"></div>
+			<!-- 直属团队 -->
+			<div class="team-item">
+				<div class="item-title">
+					<img class="fl" src="/images/img3.png" alt="">
+					<p class="fl">直属团队</p>
+				</div>
+				<div class="common-list shadow">
+					<ul>
+						<li>
+							<p>{{useradd.todaysadd}}</p>
+							<span>今日新增</span>
+						</li>
+						<li style="float: left;width: 0.8%;">
+				          <img src="/images/fenge.jpg" style="height:50px;"/>
+				       </li>
+						<li>
+							<p>{{useradd.lastweekadd}}</p>
+							<span>上月新增</span>
+						</li>
+						<li style="float: left;width: 0.8%;">
+				    <img src="/images/fenge.jpg" style="height:50px;"/>
+				</li>
+						<li>
+							<p>{{useradd.thismonthadd}}</p>
+							<span>本月新增</span>
+						</li>
+						<li style="float: left;width: 0.8%;">
+				    <img src="/images/fenge.jpg" style="height:50px;"/>
+				</li>
+						<li class="last-one">
+							<p>{{useradd.totalshop}}</p>
+							<span>累计店主</span>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="cl"></div>
+			<!-- 下属团队 -->
+			 <div class="team-item">
+				<div class="item-title">
+					<img class="fl" src="/images/img4.png" alt="">
+					<p class="fl">推荐团队</p>
+				</div>
+				<div class="common-list shadow">
+					<ul>
+						<li>
+							<p>{{useradd.referrertodaysadd}}</p>
+							<span>今日新增</span>
+						</li>
+						<li style="float: left;width: 0.8%;">
+				    <img src="/images/fenge.jpg" style="height:50px;"/>
+				</li>
+						<li>
+							<p>{{useradd.referrerlastweekadd}}</p>
+							<span>上月新增</span>
+						</li>
+						<li style="float: left;width: 0.8%;">
+				    <img src="/images/fenge.jpg" style="height:50px;"/>
+				</li>
+						<li>
+							<p>{{useradd.referrerthismonthadd}}</p>
+							<span>本月新增</span>
+						</li>
+						<li style="float: left;width: 0.8%;">
+				    <img src="/images/fenge.jpg" style="height:50px;"/>
+				</li>
+						<li class="last-one">
+							<p>{{useradd.referrertotalshop}}</p>
+							<span>累计店主</span>
+						</li>
+					</ul>
+				</div>
+			</div> 
+			
+			
+			<div class="cl"></div>
+			<!-- 销售提成 
+			 <div class="team-item">
+				<div class="item-title">
+					<img class="fl" src="/images/img4.png" alt="">
+					<p class="fl">销售提成</p>
+				</div>
+				<div class="common-list shadow">
+					<ul>
+						<li>
+							<p>{{useradd.todaysalestotal}}</p>
+							<span>今日新增</span>
+						</li>
+						<li style="float: left;width: 0.8%;">
+				    <img src="/images/fenge.jpg" style="height:50px;"/>
+				</li>
+						<li>
+							<p>{{useradd.lastweeksaletotal}}</p>
+							<span>上月新增</span>
+						</li>
+						<li style="float: left;width: 0.8%;">
+				    <img src="/images/fenge.jpg" style="height:50px;"/>
+				</li>
+						<li>
+							<p>{{useradd.thismonthsaletotal}}</p>
+							<span>本月新增</span>
+						</li>
+						<li style="float: left;width: 0.8%;">
+				    <img src="/images/fenge.jpg" style="height:50px;"/>
+				</li>
+						<li class="last-one">
+							<p>{{useradd.totalsales}}</p>
+							<span>累计提成</span>
+						</li>
+					</ul>
+				</div>
+			</div> 
+			-->
+			
+		</div>
+	</div>
+</body>
+</html>

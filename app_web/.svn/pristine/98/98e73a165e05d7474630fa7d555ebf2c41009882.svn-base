@@ -1,0 +1,35 @@
+app.controller("UserChildController", function($scope, $http){
+   
+    //判断用户有没有登陆
+    $http.get("/api/admin/islogin",{'Content-Type': 'application/json;charset=UTF-8'})
+    .success(function(data){
+    	if(data=="login"){
+    		location.href="/";
+    	}
+    	$scope.username=data;
+    })
+    $scope.user ={};
+    $scope.search = function(){
+    	var from = ($scope.current - 1) * $scope.pageSize;
+        $http.get("/api/user/child", {"params": {"mobile":$scope.mobile,"username":$("#username").val()}}, {'Content-Type': 'application/json;charset=UTF-8'})
+            .success(function(data){
+                if(data.status=="0"){
+                	$scope.user = data.data;
+                    return;
+                }else{
+                    alert(data.message);
+                    return;
+                }
+            }).error(function(data){
+            	alert(data.message);
+            	return;
+            });
+    };
+    
+   
+    
+    
+    
+    
+});
+

@@ -1,0 +1,13 @@
+app.controller("UserLoginsController", function($scope, $http){
+    
+    
+    //判断用户有没有登陆
+    $http.get("/api/admin/islogin",{'Content-Type': 'application/json;charset=UTF-8'})
+    .success(function(data){
+    	if(data=="login"){
+    		location.href="/";
+    	}
+    })
+    
+    
+});

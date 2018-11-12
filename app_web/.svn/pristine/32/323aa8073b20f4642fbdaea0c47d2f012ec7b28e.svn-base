@@ -1,0 +1,94 @@
+package com.ola.qh.entity;
+
+public class UserCommon
+{
+    
+    private String id;
+    
+    private String commonId;
+    
+    private String commoncode;
+    
+    private String commonnickname;
+    
+    private String commonheadurl;
+    
+    private String tutorId;
+    
+    private String tutorcode;
+    
+    
+
+    public String getCommoncode()
+    {
+        return commoncode;
+    }
+
+    public void setCommoncode(String commoncode)
+    {
+        this.commoncode = commoncode;
+    }
+
+    public String getId()
+    {
+        return id;
+    }
+
+    public void setId(String id)
+    {
+        this.id = id;
+    }
+
+    public String getCommonId()
+    {
+        return commonId;
+    }
+
+    public void setCommonId(String commonId)
+    {
+        this.commonId = commonId;
+    }
+
+    public String getCommonnickname()
+    {
+        return commonnickname;
+    }
+
+    public void setCommonnickname(String commonnickname)
+    {
+        this.commonnickname = commonnickname;
+    }
+
+    public String getCommonheadurl()
+    {
+        return commonheadurl;
+    }
+
+    public void setCommonheadurl(String commonheadurl)
+    {
+        this.commonheadurl = commonheadurl;
+    }
+
+    public String getTutorId()
+    {
+        return tutorId;
+    }
+
+    public void setTutorId(String tutorId)
+    {
+        this.tutorId = tutorId;
+    }
+
+    public String getTutorcode()
+    {
+        return tutorcode;
+    }
+
+    public void setTutorcode(String tutorcode)
+    {
+        this.tutorcode = tutorcode;
+    }
+    
+    
+
+}

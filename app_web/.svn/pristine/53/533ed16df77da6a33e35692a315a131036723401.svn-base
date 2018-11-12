@@ -1,0 +1,65 @@
+package com.ola.qh.web.admin;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.http.HttpRequest;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+@Controller
+public class PowerUserWeb
+{
+    
+    //招商总监登录页面
+    @RequestMapping(value="/web/user/login",method=RequestMethod.GET)
+    public String login(){
+	
+	return "user/login";
+	
+    }
+    
+    //业绩统计
+    @RequestMapping(value="/web/user/business",method=RequestMethod.GET)
+    public String business(){
+	return "user/business";
+	
+    }
+    //统计
+    @RequestMapping(value="/web/user/list",method=RequestMethod.GET)
+    public String list(){
+	//
+	return "user/powerlist";
+    }
+    @RequestMapping(value="/web/user/loginout",method=RequestMethod.GET)
+    public String loginout(){
+	return "user/login";
+    }
+    
+    @RequestMapping(value="/web/user/child",method=RequestMethod.GET)
+    public String userChild(){
+	return "user/child";
+	
+    }
+    
+    @RequestMapping(value="/web/user/tutor",method=RequestMethod.GET)
+    public String usertutor(){
+	return "user/tutor";
+    }
+    
+    @RequestMapping(value="/web/user/tutorcommon",method=RequestMethod.GET)
+    public String tutorcommon(HttpServletRequest request,String tutorId){
+	request.setAttribute("tutorId", tutorId);
+	return "user/tutorcommon";
+    }
+    
+    
+    @RequestMapping(value="/web/user/setcommon",method=RequestMethod.GET)
+    public String setcommon(){
+	return "user/setcommon";
+    }
+
+
+    
+    
+}

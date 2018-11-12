@@ -1,0 +1,72 @@
+app.controller("AdminProductListController", function($scope, $http){
+    $scope.user = {};
+    //分页展示
+    //总条数
+    $scope.total = 0;
+    //当前的页数
+    $scope.current = 1;
+    //一页显示多少条
+    $scope.pageSize = 20;
+    //判断用户有没有登陆
+    $http.get("/api/admin/islogin",{'Content-Type': 'application/json;charset=UTF-8'})
+    .success(function(data){
+    	if(data=="login"){
+    		location.href="/";
+    	}
+    	$scope.username=data;
+    })
+    
+    $scope.search = function(){
+    	$scope.loaddata();
+    }
+    
+    $scope.loaddata = function(){
+    	var from = ($scope.current - 1) * $scope.pageSize;
+        $http.get("/api/product/list", {"params": {"title":$scope.title, "pageSize": $scope.pageSize,
+            "pageNo": from, "nickName": $scope.nickName, "mobile":$scope.mobile}}, {'Content-Type': 'application/json;charset=UTF-8'})
+            .success(function(data){
+                if(data.status="0"){
+                	$scope.list = data.data;
+                	$scope.total = data.count;
+                    return;
+                }else{
+                    toastr.error(data.message);
+                }
+            }).error(function(data){
+                toastr.error(data.message);
+            });
+    };
+    
+    $scope.loaddata();
+    
+    
+    $scope.details = function(productId){
+    	window.location.href="/web/product/detail?productId="+productId;
+    };
+    
+    
+    $scope.deletes = function(productId,title){
+    	if(confirm("您确定将这个产品("+title+")删除吗")){
+    		$http.get("/api/product/delete", {"params": {"productId":productId}}, {'Content-Type': 'application/json;charset=UTF-8'})
+            .success(function(data){
+                if(data.status=="0"){
+                	toastr.success("该商品已被删除");
+                	location.href="/web/product/list";
+                    return;
+                }else{
+                    toastr.error(data.message);
+                }
+            }).error(function(data){
+                toastr.error(data.message);
+            })
+    	}
+    }
+    
+    
+    
+    
+    $scope.detailss = function(userId){
+    	window.location.href="/web/admin/user/detail?userId="+userId;
+    };
+    
+});

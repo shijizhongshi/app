@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>招商总监登录</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+<meta name="keywords" content="" />
+<link href="/styles/login.css" rel='stylesheet' type='text/css' />
+<link rel="stylesheet" href="/assets/css/xenon-components.css">
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<!--webfonts-->
+<!--<link href='http://fonts.useso.com/css?family=PT+Sans:400,700,400italic,700italic|Oswald:400,300,700' rel='stylesheet' type='text/css'>-->
+<!--<link href='http://fonts.useso.com/css?family=Exo+2' rel='stylesheet' type='text/css'>-->
+<!--//webfonts-->
+<script src="/assets/js/jquery-1.11.1.min.js"></script>
+<script src="/assets/js/angular/angular.js"></script>
+<script src="/assets/js/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+<script src="/assets/js/toastr/toastr.min.js"></script>
+<script src="/assets/js/md5-min.js"></script>
+<script src="/scripts/app.js"></script>
+<script src="/scripts/user/login.js"></script>
+</head>
+<body ng-app="app">
+<!--SIGN UP-->
+<h1>招商总监管理后台</h1>
+<div class="login-form" ng-controller="UserLoginController">
+	<div class="close"> </div>
+    <div class="head-info">
+        <label class="lbl-1"> </label>
+        <label class="lbl-2"> </label>
+        <label class="lbl-3"> </label>
+    </div>
+    <div class="clear"> </div>
+	<div class="avtar">
+		<img src="/images/avtar.png" />
+	</div>
+    <form name="form" style="margin-top: 26px;">
+        <div ng-class="{'key': form.mobile.$invalid}">
+            <input type="text" name="mobile" class="text" ng-model="user.mobile" placeholder="手机号" required>
+        </div>
+        <div ng-class="{'key': form.password.$invalid}">
+            <input type="password" name="password" ng-model="user.password" placeholder="登录密码" required>
+        </div>
+         <input type="hidden" value="1" id="poweruser">
+        <div class="signin">
+            <input type="submit" value="登陆" ng-click="submit()" ng-disabled="form.$invalid">
+        </div>
+    </form>
+</div>
+<div class="copy-rights">
+    <p>版权所有 &copy; 2017.欧拉科技</p>
+</div>
+
+</body>
+</html>

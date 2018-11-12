@@ -1,0 +1,111 @@
+<#import "/layout/header.ftl" as h/>
+<#import "/layout/bodypower.ftl" as b/>
+<!DOCTYPE html>
+<html lang="en">
+<@h.header title="团队列表"/>
+<script src="/scripts/user/userpower.js"></script>
+<@b.body menu="sidebarmenu-acount-user" submenu="sidebarmenu-acount-user-business">
+
+    <!-- Responsive Table -->
+    <div class="row" ng-controller="UserPowerController">
+    <input type="hidden" value="${username}" id="mobile">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title" >合伙人团队列表</h3>
+                   
+                    <div class="panel-options">
+                        <a href="#" data-toggle="panel">
+                            <span class="collapse-icon">&ndash;</span>
+                            <span class="expand-icon">+</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="panel-body">
+                <div class="table-responsive">
+                         <!--data-pattern="priority-columns" data-sticky-table-header="true">-->
+                         <!--data-focus-btn-icon="fa-asterisk" data-sticky-table-header="true"-->
+                         <!--data-add-display-all-btn="true">-->
+                        <table cellspacing="0" class="table table-small-font table-bordered table-striped" style="border:0px;">
+                            <thead>
+                            <tr><th>团队店主总数:</th><th>{{powerCount}}</th></tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <form class="form" role="form">
+                    <div class="row">
+                    	<div class="col-sm-1 form-group">
+                            <label>级别</label>
+                        </div>
+                        <div class="col-sm-2 form-group" style="padding-left:0px;">
+                            <input type="text" ng-model="level" placeholder="请输入级别" class="form-control">
+                        </div>
+                        <div class="col-sm-1 form-group">
+                            <label>开始日期</label>
+                        </div>
+                        <div class="col-sm-2 form-group">
+                            <input type="text" uib-datepicker-popup is-open="fromdatepickeropen" ng-model="fromdate"
+                                   ng-click="openfromdatepicker()" datepicker-options="startDateOptions" class="form-control" close-text="关闭" current-text="今天" clear-text="清空" readonly>
+                        </div>
+                        <div class="col-sm-1 form-group">
+                            <label>结束日期</label>
+                        </div>
+                        <div class="col-sm-2 form-group">
+                            <input type="text" uib-datepicker-popup is-open="todatepickeropen" ng-model="todate"
+                                   ng-click="opentodatepicker()" datepicker-options="endDateOptions" class="form-control" close-text="关闭" current-text="今天" clear-text="清空" readonly>
+                        </div>
+                        <div class="col-sm-9 form-group" style="width: 30px;">
+                            <input type="button" class="btn btn-default" ng-click="search()" value="搜索" style="background-color: #ccc;">
+                        </div>
+                    </div>
+                    </form>
+                    
+                    <div class="table-responsive">
+                         <!--data-pattern="priority-columns" data-sticky-table-header="true">-->
+                         <!--data-focus-btn-icon="fa-asterisk" data-sticky-table-header="true"-->
+                         <!--data-add-display-all-btn="true">-->
+                        <table cellspacing="0" class="table table-small-font table-bordered table-striped">
+                            <thead>
+                            <tr>
+                            <th ng-show="level=='' ">推荐总数:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{total}}</th>
+                            <th ng-show="level!='' ">本级推荐总数:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{total}}</th>
+                            </tr>
+                            <tr>
+                                
+                                <td data-priority="1">店主</td>
+                                <td data-priority="1">级别</td>
+                                
+                                
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="user in list">
+                               
+                                <td><img ng-show="user.headImgUrl!=null" src="{{user.headImgUrl}}" style="width:30px"/><img ng-show="user.headImgUrl==null" src="/images/touxiang.png" style="width:30px"/>{{user.nickName}}</td>
+                                <td>{{user.level}}</td>
+                                
+                                
+                                
+                               
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-6"></div>
+                    <div class="col-sm-6">
+                        <ul uib-pagination boundary-links="true"
+                            total-items="total" ng-model="current"
+                            items-per-page="pageSize"
+                            max-size="5"
+                            class="pagination-sm" previous-text="&lsaquo;"
+                            next-text="&rsaquo;"
+                            first-text="&laquo;" last-text="&raquo;" ng-change="loaddata()">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</@b.body>
+</html>
